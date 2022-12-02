@@ -34,5 +34,5 @@ def do_part_1(processed_input):
 
 
 def do_part_2(processed_input):
-    moves = [string_to_play[text] for text in processed_input]
-    return sum([string_to_score[text] for text in moves])
+    plays = [string_to_play[text] for text in processed_input]
+    return sum([string_to_score[text] for text in plays])
