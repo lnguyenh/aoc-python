@@ -17,7 +17,7 @@ def run(day, test, filename):
     if not day:
         day = datetime.now().strftime("%d")
 
-    print(f"Running AOC day {day}")
+    print(f"Running AOC day {day}{' IN TEST MODE' if test else ''}")
 
     # Import the module for the wanted day
     day_module_name = f"days.{day}"
@@ -45,6 +45,7 @@ def run(day, test, filename):
     t2 = datetime.now()
     print(f"Part 2: {answer_2} ({get_time_delta(t2, t1)}ms)")
 
+    # Finish
     print(f"Done in {get_time_delta(t2, t0)}ms")
 
 
