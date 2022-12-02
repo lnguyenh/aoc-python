@@ -9,6 +9,12 @@ TEST_INPUT_DIRECTORY = "./inputs/test/"
 INPUT_DIRECTORY = "./inputs/"
 
 
+def get_input_path(filename, test, day):
+    path = TEST_INPUT_DIRECTORY if test else INPUT_DIRECTORY
+    filename = filename if filename else f"{day}.txt"
+    return path + filename
+
+
 @click.command()
 @click.option("--day", default="01", help="AOC day to run")
 @click.option("--test", is_flag=True)
@@ -19,16 +25,14 @@ def run(day, test, filename):
 
     print(f"Running AOC day {day}{' IN TEST MODE' if test else ''}")
 
-    # Import the module for the wanted day
+    # Import the module for the day
     day_module_name = f"days.{day}"
     day_module = import_module(day_module_name)
 
-    # Get the input blob
-    path = TEST_INPUT_DIRECTORY if test else INPUT_DIRECTORY
-    filename = filename if filename else f"{day}.txt"
-    input_file_path = path + filename
-    print(f"Using input {input_file_path}")
-    with open(input_file_path, "r") as file:
+    # Read the raw input
+    input_path = get_input_path(filename, test, day)
+    print(f"Using input {input_path}")
+    with open(input_path, "r") as file:
         blob = file.read()
 
     # Get processed input

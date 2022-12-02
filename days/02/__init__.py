@@ -10,8 +10,6 @@ PLAY_TO_SCORE = {
     "CZ": 3 + 3,
 }
 
-# Translate a part-2 string to a part-1 desired play
-# X lose, Y draw, Z win
 DESIRED_OUTCOME_TO_PLAY = {
     "AX": "AZ",
     "BX": "BX",
