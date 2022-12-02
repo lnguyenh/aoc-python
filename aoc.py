@@ -3,7 +3,7 @@ from importlib import import_module
 
 import click
 
-from utils.time import get_time_delta
+from utils.time import timedelta_in_ms
 
 TEST_INPUT_DIRECTORY = "./inputs/test/"
 INPUT_DIRECTORY = "./inputs/"
@@ -48,9 +48,9 @@ def run(day, test, filename):
     t2 = datetime.now()
 
     # Finish
-    print(f"Part 1: {answer_1} ({get_time_delta(t1, t0)}ms)")
-    print(f"Part 2: {answer_2} ({get_time_delta(t2, t1)}ms)")
-    print(f"Done in {get_time_delta(t2, t0)}ms")
+    print(f"Part 1: {answer_1} ({timedelta_in_ms(t1, t0)}ms)")
+    print(f"Part 2: {answer_2} ({timedelta_in_ms(t2, t1)}ms)")
+    print(f"Done in {timedelta_in_ms(t2, t0)}ms")
 
 
 if __name__ == "__main__":
