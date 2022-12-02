@@ -19,6 +19,7 @@ python aoc.py --day "01"
 make prepare day=03
 ```
 ### Run a solution for the test input
+```
 . ./venv/bin/activate
 python aoc.py --day "01" --test
 ```
