@@ -10,6 +10,7 @@ string_to_score = {
     "CZ": 3 + 3,
 }
 
+# Translate a part-2 string to a part-1 desired play
 # X lose, Y draw, Z win
 string_to_play = {
     "AX": "AZ",
