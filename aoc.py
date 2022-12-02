@@ -10,7 +10,7 @@ INPUT_DIRECTORY = "./inputs/"
 
 
 @click.command()
-@click.option("--day", default=0, help="AOC day to run")
+@click.option("--day", default="01", help="AOC day to run")
 @click.option("--test", is_flag=True)
 @click.option("--filename", default="", help="Input file name")
 def run(day, test, filename):
