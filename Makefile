@@ -2,4 +2,5 @@
 prepare:
 	touch ./inputs/$(day).txt
 	touch ./inputs/test/$(day).txt
-	cp -r ./days/00 ./days/$(day)
+	mkdir ./days/$(day)
+	cp -r ./days/00/__init__.py ./days/$(day)/
