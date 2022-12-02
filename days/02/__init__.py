@@ -29,10 +29,10 @@ def process_input(blob):
     return blob.replace(" ", "").split("\n")
 
 
-def do_part_1(processed_input):
+def do_part_1(plays):
     return sum([PLAY_TO_SCORE[play] for play in processed_input])
 
 
-def do_part_2(processed_input):
-    plays = [DESIRED_OUTCOME_TO_PLAY[outcome] for outcome in processed_input]
+def do_part_2(desired_outcomes):
+    plays = [DESIRED_OUTCOME_TO_PLAY[outcome] for outcome in desired_outcomes]
     return sum([PLAY_TO_SCORE[play] for play in plays])
