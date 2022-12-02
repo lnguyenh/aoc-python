@@ -30,7 +30,7 @@ def process_input(blob):
 
 
 def do_part_1(plays):
-    return sum([PLAY_TO_SCORE[play] for play in processed_input])
+    return sum([PLAY_TO_SCORE[play] for play in plays])
 
 
 def do_part_2(desired_outcomes):
