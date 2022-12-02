@@ -33,10 +33,10 @@ def run(day, test, filename):
 
     # Read the raw input
     with open(input_path, "r") as file:
-        blob = file.read()
+        raw_input = file.read()
 
     # Get processed input
-    processed_input = day_module.process_input(blob)
+    processed_input = day_module.process_input(raw_input)
 
     # Run part 1
     t0 = datetime.now()
