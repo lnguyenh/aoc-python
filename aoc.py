@@ -16,20 +16,19 @@ def get_input_path(day, test, filename):
 
 
 @click.command()
-@click.option("--day", default="01", help="AOC day to run")
+@click.option("--day", default="", help="AOC day to run")
 @click.option("--test", is_flag=True)
 @click.option("--filename", default="", help="Input file name")
 def run(day, test, filename):
+    # Setup
     if not day:
         # Use today's day of the month
         day = datetime.now().strftime("%d")
+    input_path = get_input_path(day, test, filename)
+    print(f"Running AOC day {day}{' IN TEST MODE' if test else ''} using {input_path}")
 
     # Import the module for the day
     day_module = import_module(f"days.{day}")
-
-    input_path = get_input_path(day, test, filename)
-
-    print(f"Running AOC day {day}{' IN TEST MODE' if test else ''} using {input_path}")
 
     # Read the raw input
     with open(input_path, "r") as file:
