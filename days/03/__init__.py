@@ -20,7 +20,6 @@ def do_part_1(rucksacks):
 
 def do_part_2(rucksacks):
     priority_sum = 0
-    for i in range(0, len(rucksacks), 3):
-        elf1, elf2, elf3 = rucksacks[i], rucksacks[i + 1], rucksacks[i + 2]
+    for elf1, elf2, elf3 in zip(*(iter(rucksacks),) * 3):
         priority_sum += set(elf1).intersection(set(elf2)).intersection(set(elf3)).pop()
     return priority_sum

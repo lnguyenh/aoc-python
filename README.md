@@ -23,3 +23,13 @@ make prepare day=03
 . ./venv/bin/activate
 python aoc.py --day "01" --test
 ```
+
+### Tricks I learnt
+```
+# iterate through chunks
+l = [1, 2, 3, 4, 5, 6]
+for a, b, c in zip(*(iter(l),) * 3):
+    print(a, b, c)
+1 2 3
+4 5 6
+```
