@@ -10,19 +10,17 @@ def process_input(blob):
     return [[priority(c) for c in line] for line in blob.split("\n")]
 
 
-def do_part_1(lines):
+def do_part_1(rucksacks):
     priority_sum = 0
-    for line in lines:
-        length = int(len(line) / 2)
-        common = {*line[:length]}.intersection({*line[length:]}).pop()
-        priority_sum += common
+    for rucksack in rucksacks:
+        middle = int(len(rucksack) / 2)
+        priority_sum += {*rucksack[:middle]}.intersection({*rucksack[middle:]}).pop()
     return priority_sum
 
 
-def do_part_2(lines):
+def do_part_2(rucksacks):
     priority_sum = 0
-    for i in range(0, len(lines), 3):
-        a, b, c = lines[i], lines[i + 1], lines[i + 2]
-        common = set(a).intersection(set(b)).intersection(set(c)).pop()
-        priority_sum += common
+    for i in range(0, len(rucksacks), 3):
+        elf1, elf2, elf3 = rucksacks[i], rucksacks[i + 1], rucksacks[i + 2]
+        priority_sum += set(elf1).intersection(set(elf2)).intersection(set(elf3)).pop()
     return priority_sum
