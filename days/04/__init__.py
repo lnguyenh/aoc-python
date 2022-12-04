@@ -5,7 +5,7 @@ def process_input(blob):
     ]
 
 
-def is_in(a, b):
+def is_contained_or_contains(a, b):
     return a[0] <= b[0] and a[1] >= b[1] or a[1] <= b[1] and a[0] >= b[0]
 
 
@@ -18,7 +18,7 @@ def has_overlap(zone1_start, zone1_end, zone2_start, zone2_end):
 
 
 def do_part_1(pairs):
-    return sum([1 for pair in pairs if is_in(pair[0], pair[1])])
+    return sum([1 for pair in pairs if is_contained_or_contains(pair[0], pair[1])])
 
 
 def do_part_2(pairs):
