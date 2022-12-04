@@ -24,8 +24,8 @@ make prepare day=03
 python aoc.py --day "01" --test
 ```
 
-### Tricks I learnt
-#### Iterate through chunks
+## Tricks I learnt
+### Iterate through chunks
 ```
 l = [1, 2, 3, 4, 5, 6]
 for a, b, c in zip(*(iter(l),) * 3):
@@ -35,7 +35,7 @@ for a, b, c in zip(*(iter(l),) * 3):
 1 2 3
 4 5 6
 ```
-#### Pandas intervals
+### Pandas intervals
 ```
 from pandas import Interval
 a = Interval(1, 4, closed="both")
