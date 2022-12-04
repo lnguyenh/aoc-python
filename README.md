@@ -14,17 +14,27 @@ python aoc.py --day "01"
 ```
 
 ## Convenience tools
+### Running the aoc solutions
+```
+# run today's solution
+python aoc.py  
+
+# run today's solution against the test input
+python aoc.py --test 
+
+# run day 01 against the test input
+python aoc.py --day "01" --test  
+
+# run day 05 against the file toto.txt contained in the test input folder
+python aoc.py --day "05" --test --filename toto.txt 
+```
 ### Create the base files for a new day
 ```
 make prepare day=03
 ```
-### Run a solution for the test input
-```
-. ./venv/bin/activate
-python aoc.py --day "01" --test
-```
 
-## Tricks I learnt
+
+## Tricks I learnt this year
 ### Iterate through chunks
 ```
 l = [1, 2, 3, 4, 5, 6]
