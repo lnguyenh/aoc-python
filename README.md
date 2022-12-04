@@ -25,11 +25,22 @@ python aoc.py --day "01" --test
 ```
 
 ### Tricks I learnt
+#### Iterate through chunks
 ```
-# iterate through chunks
 l = [1, 2, 3, 4, 5, 6]
 for a, b, c in zip(*(iter(l),) * 3):
     print(a, b, c)
+```
+```
 1 2 3
 4 5 6
+```
+#### Pandas intervals
+```
+from pandas import Interval
+a = Interval(1, 4, closed="both")
+b = Interval(2, 3, closed="both")
+print(a in b)
+print(b in a)
+print(a.overlaps(b))
 ```
