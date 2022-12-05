@@ -45,10 +45,7 @@ class Stacker:
                 self.stacks[destination].append(block.pop())
 
     def get_last_word(self):
-        letters = []
-        for _, stack in self.stacks.items():
-            letters.append(stack.pop())
-        return "".join(letters)
+        return "".join([stack.pop() for _, stack in self.stacks.items()])
 
 
 def process_input(blob):
