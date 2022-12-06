@@ -10,8 +10,11 @@ def sliding_window(iterable, n):
     it = iter(iterable)
     window = deque(islice(it, n), maxlen=n)
     if len(window) == n:
+        # First iteration
         yield tuple(window)
+        # Because it is an iterator, we continue from where we left off below
     for x in it:
+        # All other iterations
         window.append(x)
         yield tuple(window)
 
