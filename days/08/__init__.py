@@ -1,11 +1,6 @@
 class Forest:
     def __init__(self, lines):
         self.grid = {}
-        self.left = {}
-        self.right = {}
-        self.up = {}
-        self.down = {}
-        self.scenic = {}
 
         for i, line in enumerate(lines):
             for j, c in enumerate(line):
@@ -19,63 +14,58 @@ class Forest:
         self.y_bound = self.max_y + 1
 
         self.visible = {key: False for key in self.points}
-        self.init_visible()
-        self.populate_heights_from_direction()
-        self.check_visibility()
+        self.populate_visibility()
 
+        self.scenic = {}
         self.populate_scenic()
 
-    def init_visible(self):
-        for x in range(self.max_x + 1):
-            self.visible[(x, 0)] = True
-            self.visible[(x, self.max_y)] = True
+    def get_heights_from_directions(self):
+        up = {}
+        left = {}
+        right = {}
+        down = {}
 
-        for y in range(self.max_y + 1):
-            self.visible[(0, y)] = True
-            self.visible[(self.max_x, y)] = True
-
-    def populate_heights_from_direction(self):
         for x in range(1, self.x_bound):
             top = 0
             for y in range(0, self.y_bound):
                 if self.grid[(x, y)] > top:
                     top = self.grid[(x, y)]
-                self.up[(x, y + 1)] = top
+                up[(x, y + 1)] = top
         for y in range(1, self.y_bound):
             top = 0
             for x in range(0, self.x_bound):
                 if self.grid[(x, y)] > top:
                     top = self.grid[(x, y)]
-                self.left[(x + 1, y)] = top
+                left[(x + 1, y)] = top
         for x in range(1, self.x_bound):
             top = 0
             for y in range(self.max_y, 0, -1):
                 if self.grid[(x, y)] > top:
                     top = self.grid[(x, y)]
-                self.down[(x, y - 1)] = top
+                down[(x, y - 1)] = top
         for y in range(1, self.y_bound):
             top = 0
             for x in range(self.max_x, 0, -1):
                 if self.grid[(x, y)] > top:
                     top = self.grid[(x, y)]
-                self.right[(x - 1, y)] = top
+                right[(x - 1, y)] = top
+        return up, down, left, right
 
-    def check_visibility(self):
+    def populate_visibility(self):
+        up, down, left, right = self.get_heights_from_directions()
         for point in self.points:
-            if self.visible[point]:
+            if point[0] in [0, self.max_x] or point[1] in [0, self.max_y]:
+                self.visible[point] = True
                 continue
             height = self.grid[point]
             self.visible[point] = any(
                 [
-                    height > self.up[point],
-                    height > self.down[point],
-                    height > self.left[point],
-                    height > self.right[point],
+                    height > up[point],
+                    height > down[point],
+                    height > left[point],
+                    height > right[point],
                 ]
             )
-
-    def count_visible(self):
-        return sum([self.visible[point] for point in self.points])
 
     def populate_scenic(self):
         for x, y in self.points:
@@ -104,6 +94,9 @@ class Forest:
                 if self.grid[(x, yu)] >= height:
                     break
             self.scenic[(x, y)] = xr_scenic * xl_scenic * yd_scenic * yu_scenic
+
+    def count_visible(self):
+        return sum([self.visible[point] for point in self.points])
 
     def max_scenic(self):
         return max([self.scenic[point] for point in self.points])

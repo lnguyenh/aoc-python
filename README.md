@@ -54,3 +54,15 @@ print(a in b)
 print(b in a)
 print(a.overlaps(b))
 ```
+### Reversed
+```
+for x in reversed(range(6)):
+    print(x)
+    
+5
+4
+3
+2
+1
+0
+```
