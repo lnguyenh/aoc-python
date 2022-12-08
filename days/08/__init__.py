@@ -1,10 +1,6 @@
 class Forest:
     def __init__(self, lines):
-        self.grid = {}
-
-        for i, line in enumerate(lines):
-            for j, c in enumerate(line):
-                self.grid[(j, i)] = int(c)
+        self.grid = self.build_grid(lines)
 
         # Convenience shortcuts
         self.points = self.grid.keys()
@@ -18,6 +14,13 @@ class Forest:
 
         self.scenic = {}
         self.populate_scenic()
+
+    def build_grid(self, lines):
+        grid = {}
+        for i, line in enumerate(lines):
+            for j, c in enumerate(line):
+                grid[(j, i)] = int(c)
+        return grid
 
     def get_heights_from_directions(self):
         up = {}
