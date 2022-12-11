@@ -1,45 +1,5 @@
 from collections import deque
 
-import math
-
-
-# A function to perform division of
-# large numbers
-def longDivision(number, divisor):
-    # As result can be very large
-    # store it in string
-    ans = ""
-
-    # Find prefix of number that
-    # is larger than divisor.
-    idx = 0
-    temp = ord(number[idx]) - ord("0")
-    while temp < divisor:
-        temp = temp * 10 + ord(number[idx + 1]) - ord("0")
-        idx += 1
-
-    idx += 1
-
-    # Repeatedly divide divisor with temp.
-    # After every division, update temp to
-    # include one more digit.
-    while (len(number)) > idx:
-        # Store result in answer i.e. temp / divisor
-        ans += chr(math.floor(temp // divisor) + ord("0"))
-
-        # Take next digit of number
-        temp = (temp % divisor) * 10 + ord(number[idx]) - ord("0")
-        idx += 1
-
-    ans += chr(math.floor(temp // divisor) + ord("0"))
-
-    # If divisor is greater than number
-    if len(ans) == 0:
-        return "0"
-
-    # else return ans
-    return ans
-
 
 class Transform:
     def __init__(self, operator, old_or_number):
@@ -72,6 +32,7 @@ class Monkey:
         self.monkey_true = monkey_true
         self.monkey_false = monkey_false
         self.inspects = 0
+        self.levels_as_modulos = deque()
 
 
 class Game:
@@ -80,22 +41,46 @@ class Game:
         self.monkey_ids = sorted([monkey_id for monkey_id, _ in monkeys.items()])
         self.do_divide = do_divide
 
+        divisions = [monkey.divisible for _, monkey in monkeys.items()]
+        for _, monkey in monkeys.items():
+            for level in monkey.levels:
+                level_modulos = {}
+                for division in divisions:
+                    level_modulos[str(division)] = level % division
+                monkey.levels_as_modulos.append(level_modulos)
+
     def play_one_round(self):
         for monkey_id in self.monkey_ids:
             monkey = self.monkeys[monkey_id]
-            while monkey.levels:
-                level = monkey.levels.popleft()
-                new_level = monkey.transform.do(level)
 
-                if self.do_divide:
+            if self.do_divide:
+                # Part 1
+                while monkey.levels:
+                    level = monkey.levels.popleft()
+                    new_level = monkey.transform.do(level)
                     new_level = int(new_level / 3)
-                else:
-                    pass
-                if new_level % monkey.divisible == 0:
-                    self.monkeys[monkey.monkey_true].levels.append(new_level)
-                else:
-                    self.monkeys[monkey.monkey_false].levels.append(new_level)
-                monkey.inspects += 1
+                    if new_level % monkey.divisible == 0:
+                        self.monkeys[monkey.monkey_true].levels.append(new_level)
+                    else:
+                        self.monkeys[monkey.monkey_false].levels.append(new_level)
+                    monkey.inspects += 1
+            else:
+                # Part 2 (work with modulos)
+                while monkey.levels_as_modulos:
+                    level_as_modulos = monkey.levels_as_modulos.popleft()
+                    for division in level_as_modulos.keys():
+                        level_as_modulos[division] = monkey.transform.do(
+                            level_as_modulos[division]
+                        ) % int(division)
+                    if level_as_modulos[str(monkey.divisible)] == 0:
+                        self.monkeys[monkey.monkey_true].levels_as_modulos.append(
+                            level_as_modulos
+                        )
+                    else:
+                        self.monkeys[monkey.monkey_false].levels_as_modulos.append(
+                            level_as_modulos
+                        )
+                    monkey.inspects += 1
 
     def print(self, round_number):
         print(f"Round {round_number}:")
@@ -106,6 +91,7 @@ class Game:
     def play_n_rounds(self, n):
         for i in range(n):
             self.play_one_round()
+            # Uncomment to print each round
             # self.print(i + 1)
 
     def multiply_top_two_inspects(self):
@@ -159,4 +145,4 @@ def do_part_1(blob):
 def do_part_2(blob):
     game = create_game(blob, do_divide=False)
     game.play_n_rounds(10000)
-    return "toto"
+    return game.multiply_top_two_inspects()
