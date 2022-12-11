@@ -1,5 +1,45 @@
 from collections import deque
 
+import math
+
+
+# A function to perform division of
+# large numbers
+def longDivision(number, divisor):
+    # As result can be very large
+    # store it in string
+    ans = ""
+
+    # Find prefix of number that
+    # is larger than divisor.
+    idx = 0
+    temp = ord(number[idx]) - ord("0")
+    while temp < divisor:
+        temp = temp * 10 + ord(number[idx + 1]) - ord("0")
+        idx += 1
+
+    idx += 1
+
+    # Repeatedly divide divisor with temp.
+    # After every division, update temp to
+    # include one more digit.
+    while (len(number)) > idx:
+        # Store result in answer i.e. temp / divisor
+        ans += chr(math.floor(temp // divisor) + ord("0"))
+
+        # Take next digit of number
+        temp = (temp % divisor) * 10 + ord(number[idx]) - ord("0")
+        idx += 1
+
+    ans += chr(math.floor(temp // divisor) + ord("0"))
+
+    # If divisor is greater than number
+    if len(ans) == 0:
+        return "0"
+
+    # else return ans
+    return ans
+
 
 class Transform:
     def __init__(self, operator, old_or_number):
@@ -35,9 +75,10 @@ class Monkey:
 
 
 class Game:
-    def __init__(self, monkeys):
+    def __init__(self, monkeys, do_divide):
         self.monkeys = monkeys
         self.monkey_ids = sorted([monkey_id for monkey_id, _ in monkeys.items()])
+        self.do_divide = do_divide
 
     def play_one_round(self):
         for monkey_id in self.monkey_ids:
@@ -45,15 +86,15 @@ class Game:
             while monkey.levels:
                 level = monkey.levels.popleft()
                 new_level = monkey.transform.do(level)
-                new_level_divided_by_3 = int(new_level / 3)
-                if new_level_divided_by_3 % monkey.divisible == 0:
-                    self.monkeys[monkey.monkey_true].levels.append(
-                        new_level_divided_by_3
-                    )
+
+                if self.do_divide:
+                    new_level = int(new_level / 3)
                 else:
-                    self.monkeys[monkey.monkey_false].levels.append(
-                        new_level_divided_by_3
-                    )
+                    pass
+                if new_level % monkey.divisible == 0:
+                    self.monkeys[monkey.monkey_true].levels.append(new_level)
+                else:
+                    self.monkeys[monkey.monkey_false].levels.append(new_level)
                 monkey.inspects += 1
 
     def print(self, round_number):
@@ -74,7 +115,7 @@ class Game:
         return inspects[0] * inspects[1]
 
 
-def process_input(blob):
+def create_game(blob, do_divide):
     monkeys = {}
     raw_monkeys = blob.split("\n\n")
     for raw_monkey in raw_monkeys:
@@ -102,14 +143,20 @@ def process_input(blob):
         monkeys[monkey_id] = Monkey(
             levels, transform, divisible, monkey_true, monkey_false
         )
-    return monkeys
+    return Game(monkeys, do_divide)
 
 
-def do_part_1(monkeys):
-    game = Game(monkeys)
+def process_input(blob):
+    return blob
+
+
+def do_part_1(blob):
+    game = create_game(blob, do_divide=True)
     game.play_n_rounds(20)
     return game.multiply_top_two_inspects()
 
 
-def do_part_2(processed_input):
+def do_part_2(blob):
+    game = create_game(blob, do_divide=False)
+    game.play_n_rounds(10000)
     return "toto"
