@@ -19,6 +19,7 @@ def djikstra(edges, start, destination):
         if v1 not in seen:
             # At each iteration we only process the first element of the heap
             # This means the next unseen point which is closest from our start node
+            # Put a breakpoint line 17 and run this file to understand if needed
 
             seen.add(v1)
             path += (v1,)
