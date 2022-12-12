@@ -3,29 +3,36 @@ from heapq import heappop, heappush
 
 
 # https://gist.github.com/kachayev/5990802
-def djikstra(edges, f, t):
+def djikstra(edges, start, destination):
     # edges are tuples: (start-node-name, end-node-name, cost)
-    g = defaultdict(list)
-    for l, r, c in edges:
-        g[l].append((c, r))
+    nodes = defaultdict(list)
+    for from_node, to_node, cost in edges:
+        nodes[from_node].append((cost, to_node))
 
-    q, seen, mins = [(0, f, ())], set(), {f: 0}
+    q = [(0, start, ())]
+    seen = set()
+    mins = {start: 0}  # maintains shortest cost to all the nodes
+
     while q:
         (cost, v1, path) = heappop(q)
         if v1 not in seen:
             seen.add(v1)
-            path = (v1, path)
-            if v1 == t:
+            path += (v1,)
+            if v1 == destination:
                 return cost, path
 
-            for c, v2 in g.get(v1, ()):
-                if v2 in seen:
+            for cost_v1_to_v2, v2 in nodes.get(v1, ()):
+                # loop through all the v2s that can bet attained from v1
+                if v2 in seen:  # v2 has already be dealt with as a v1
                     continue
-                prev = mins.get(v2, None)
-                next = cost + c
-                if prev is None or next < prev:
-                    mins[v2] = next
-                    heappush(q, (next, v2, path))
+                current_min_total_cost_to_v2 = mins.get(v2, None)
+                candidate_total_cost_to_v2 = cost + cost_v1_to_v2
+                if (
+                    current_min_total_cost_to_v2 is None
+                    or candidate_total_cost_to_v2 < current_min_total_cost_to_v2
+                ):
+                    mins[v2] = candidate_total_cost_to_v2  # update total min cost to v2
+                    heappush(q, (candidate_total_cost_to_v2, v2, path))
 
     return float("inf"), None
 
