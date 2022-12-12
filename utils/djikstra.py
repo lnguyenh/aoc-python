@@ -14,19 +14,23 @@ def djikstra(edges, start, destination):
     mins = {start: 0}  # maintains shortest cost to all the nodes
 
     while q:
-        (cost, v1, path) = heappop(q)
+        (total_cost_to_v1, v1, path) = heappop(q)
+
         if v1 not in seen:
+            # At each iteration we only process the first element of the heap
+            # This means the next unseen point which is closest from our start node
+
             seen.add(v1)
             path += (v1,)
             if v1 == destination:
-                return cost, path
+                return total_cost_to_v1, path
 
             for cost_v1_to_v2, v2 in nodes.get(v1, ()):
                 # loop through all the v2s that can bet attained from v1
                 if v2 in seen:  # v2 has already be dealt with as a v1
                     continue
                 current_min_total_cost_to_v2 = mins.get(v2, None)
-                candidate_total_cost_to_v2 = cost + cost_v1_to_v2
+                candidate_total_cost_to_v2 = total_cost_to_v1 + cost_v1_to_v2
                 if (
                     current_min_total_cost_to_v2 is None
                     or candidate_total_cost_to_v2 < current_min_total_cost_to_v2
@@ -53,9 +57,18 @@ if __name__ == "__main__":
         ("F", "G", 11),
     ]
 
-    print("=== Dijkstra ===")
-    print(edges)
-    print("A -> E:")
-    print(djikstra(edges, "A", "E"))
-    print("F -> G:")
-    print(djikstra(edges, "F", "G"))
+    # print("=== Dijkstra ===")
+    # print(edges)
+    # print("A -> E:")
+    # print(djikstra(edges, "A", "E"))
+    # print("F -> G:")
+    # print(djikstra(edges, "F", "G"))
+
+    edges = [
+        ("A", "B", 1),
+        ("A", "D", 99),
+        ("B", "C", 2),
+        ("C", "D", 3),
+    ]
+    print("A -> D:")
+    print(djikstra(edges, "A", "D"))
