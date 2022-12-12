@@ -31,6 +31,7 @@ def djikstra(edges, start, destination):
                     current_min_total_cost_to_v2 is None
                     or candidate_total_cost_to_v2 < current_min_total_cost_to_v2
                 ):
+                    # We found a new total min cost to v2
                     mins[v2] = candidate_total_cost_to_v2  # update total min cost to v2
                     heappush(q, (candidate_total_cost_to_v2, v2, path))
 
