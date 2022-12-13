@@ -1,5 +1,16 @@
 def is_int_equal(a, b):
-    return type(a) == int and type(b) == int and a == b
+    # Gotcha: 2 is equal to [[2]]
+    while True:
+        if type(a) == int and type(b) == int:
+            return a == b
+        if type(a) == list:
+            if len(a) != 1:
+                return False
+            a = a[0]
+        if type(b) == list:
+            if len(b) != 1:
+                return False
+            b = b[0]
 
 
 def is_in_right_order(left, right):
@@ -67,11 +78,34 @@ def do_part_1(pairs):
         if is_in_order:
             count += 1
             result += index
-            print(f"Pair {index} in order")
+            # print(f"Pair {index} in order")
         else:
-            print(f"Pair {index} NOT in order")
+            pass
+            # print(f"Pair {index} NOT in order")
     return result
 
 
-def do_part_2(processed_input):
-    return "toto"
+def do_part_2(pairs):
+    packets = []
+    for left, right in pairs:
+        packets.append(left)
+        packets.append(right)
+    packets.append([[2]])
+    packets.append([[6]])
+    num_switches = 1
+    while num_switches:
+        num_switches = 0
+        for i in range(len(packets) - 1):
+            if not is_in_right_order(packets[i], packets[i + 1]):
+                x = packets[i + 1]
+                packets[i + 1] = packets[i]
+                packets[i] = x
+                num_switches += 1
+    a = None
+    b = None
+    for i, p in enumerate(packets):
+        if p == [[2]]:
+            a = i + 1
+        if p == [[6]]:
+            b = i + 1
+    return a * b
