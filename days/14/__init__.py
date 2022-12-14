@@ -12,6 +12,7 @@ class Cave:
         self.minx, self.maxx, self.miny, self.maxy = self.get_maxes()
         self.floor_y = None
         self.do_print = False
+        self.tmp_grid = {}
 
         # Matplotlib stuff
         self.done = False
@@ -35,6 +36,9 @@ class Cave:
             elif char == "o":
                 val = 100
             plot_grid[y][x] = val
+        for xy in self.tmp_grid.keys():
+            x, y = xy
+            plot_grid[y][x] = 200
         for x in range(700):
             for y in range(self.maxy + 2, 200):
                 plot_grid[y][x] = 300
@@ -87,7 +91,11 @@ class Cave:
 
     def drop(self):
         x, y = 500, 0
+        self.tmp_grid = {}
         while True:
+            # Used for the visualisation
+            self.tmp_grid[(x, y)] = "c"
+
             if self.floor_y is None:
                 if y == self.maxy:
                     self.done = True
