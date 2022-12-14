@@ -21,13 +21,11 @@ class Cave:
 
     def initialize_plot(self):
         self.fig = plt.figure()
-        self.im = plt.imshow(
-            self.get_plot_grid(), animated=True, cmap="gray", vmin=0, vmax=255
-        )
+        self.im = plt.imshow(self.get_plot_grid(), animated=True, aspect="auto")
         plt.axis("off")
 
     def get_plot_grid(self):
-        plot_grid = numpy.zeros((700, 200), dtype=int)
+        plot_grid = numpy.zeros((200, 700), dtype=int)
         for xy in self.grid.keys():
             x, y = xy
             char = self.get_xy(x, y)
@@ -36,9 +34,11 @@ class Cave:
                 val = 255
             elif char == "o":
                 val = 100
-            plot_grid[x][y] = val
-        plot_grid = np.rot90(plot_grid, 3, axes=(0, 1))
-        plot_grid = plot_grid[0:180, 0:380]
+            plot_grid[y][x] = val
+        for x in range(700):
+            for y in range(self.maxy + 2, 200):
+                plot_grid[y][x] = 300
+        plot_grid = plot_grid[0:180, 310:700]
         return plot_grid
 
     def update(self, i):
@@ -49,7 +49,7 @@ class Cave:
         return (self.im,)
 
     def animate(self):
-        self.ani = animation.FuncAnimation(self.fig, self.update, interval=2, blit=True)
+        self.ani = animation.FuncAnimation(self.fig, self.update, interval=1, blit=True)
         plt.show()
         return self.ani
 
