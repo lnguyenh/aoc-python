@@ -1,5 +1,9 @@
 import os
 from time import sleep
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy
+import numpy as np
 
 
 class Cave:
@@ -8,6 +12,46 @@ class Cave:
         self.minx, self.maxx, self.miny, self.maxy = self.get_maxes()
         self.floor_y = None
         self.do_print = False
+
+        # Matplotlib stuff
+        self.done = False
+        self.fig = None
+        self.im = None
+        self.ani = None
+
+    def initialize_plot(self):
+        self.fig = plt.figure()
+        self.im = plt.imshow(
+            self.get_plot_grid(), animated=True, cmap="gray", vmin=0, vmax=255
+        )
+        plt.axis("off")
+
+    def get_plot_grid(self):
+        plot_grid = numpy.zeros((700, 200), dtype=int)
+        for xy in self.grid.keys():
+            x, y = xy
+            char = self.get_xy(x, y)
+            val = 0
+            if char == "*":
+                val = 255
+            elif char == "o":
+                val = 100
+            plot_grid[x][y] = val
+        plot_grid = np.rot90(plot_grid, 3, axes=(0, 1))
+        plot_grid = plot_grid[0:180, 0:380]
+        return plot_grid
+
+    def update(self, i):
+        if self.done:
+            return (self.im,)
+        self.drop()
+        self.im.set_array(self.get_plot_grid())
+        return (self.im,)
+
+    def animate(self):
+        self.ani = animation.FuncAnimation(self.fig, self.update, interval=2, blit=True)
+        plt.show()
+        return self.ani
 
     def get_maxes(self):
         minx = maxx = miny = maxy = None
@@ -25,12 +69,13 @@ class Cave:
 
     def print(self):
         os.system("clear")
-        for y in range(self.miny - 5, self.maxy + 6):
+        # for y in range(self.miny - 5, self.maxy + 6):
+        for y in range(-1, 175):
             line = f""
-            for x in range(self.minx - 5, self.maxx + 10):
-                line += self.get_xy(x, y, ".")
+            # for x in range(self.minx - 5, self.maxx + 10):
+            for x in range(300, 700):
+                line += self.get_xy(x, y, " ")
             print(line)
-        print("\n")
 
     def get_xy(self, x, y, default=None):
         if y == self.floor_y:
@@ -45,6 +90,7 @@ class Cave:
         while True:
             if self.floor_y is None:
                 if y == self.maxy:
+                    self.done = True
                     return -1
 
             left = self.get_xy(x - 1, y + 1)
@@ -60,10 +106,13 @@ class Cave:
             else:
                 break
         self.grid[(x, y)] = "o"
+
         if self.do_print:
             self.print()
-            sleep(0.2)
+            sleep(0.005)
+
         if x == 500 and y == 0:
+            self.done = True
             return -1
         return 0
 
@@ -98,7 +147,7 @@ def process_input(blob):
             )
             for x in range(from_x, to_x + dir_x, dir_x):
                 for y in range(from_y, to_y + dir_y, dir_y):
-                    grid[(x, y)] = "#"
+                    grid[(x, y)] = "*"
     return Cave(grid), Cave(grid.copy())
 
 
@@ -111,6 +160,10 @@ def do_part_1(caves):
 def do_part_2(caves):
     _, cave = caves
     cave.floor_y = cave.maxy + 2
-    # cave.do_print = True
+
+    # Uncomment to show the matplotlib animation
+    cave.initialize_plot()
+    cave.animate()
+
     num_drops = cave.fill()
     return num_drops + 1
