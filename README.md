@@ -66,3 +66,15 @@ for x in reversed(range(6)):
 1
 0
 ```
+### Matplotlib
+- See day 14 for animation
+- https://github.com/tomsembl/AdventOfCode/blob/main/2022/14.3.py could be a source of inspiration too or https://www.reddit.com/r/adventofcode/comments/zlmwb4/2022_day_14_how_does_everyone_do_visualisations/
+
+### Numpy for dummies
+```
+grid = np.zeros((10, 5))  # 10 on the y-axis, 5 on the x-axis
+x = 4
+y = 9
+grid[y][x] = 7
+print(grid)
+```
