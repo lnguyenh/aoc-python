@@ -78,3 +78,6 @@ y = 9
 grid[y][x] = 7
 print(grid)
 ```
+
+### Maybe worth looking at some day
+- Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
