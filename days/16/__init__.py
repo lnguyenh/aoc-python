@@ -10,12 +10,18 @@ class Valve:
         self.to_valves = to_valves
         self.is_open = False
         self.shortest_paths = {}
+        self.shortest_paths_useful = {}
 
     def compute_shortest_paths(self, valve_names, edges):
         for destination in valve_names:
             self.shortest_paths[destination] = djikstra(edges, self.name, destination)[
                 1
             ]
+
+    def populate_useful(self, valves):
+        for valve_name, path in self.shortest_paths.items():
+            if valves[valve_name].rate > 0:
+                self.shortest_paths_useful[valve_name] = path[1:]
 
     def best_next_valve(self, minutes, valve_names, valves):
         worth = {}
@@ -43,17 +49,23 @@ class Valve:
 
         return max_destination, worth[max_destination][0], worth[max_destination][1]
 
-    def get_paths(self, num, valves):
-        if num == 1:
-            a = [[self.name]]
-            return a
+    def get_paths(self, minutes_left, valves, visited):
+        if (
+            len(self.shortest_paths_useful.keys()) - len(visited) == 0
+            or minutes_left < 0
+        ):
+            return [[self.name]]
 
         paths = []
-        for to_valve in self.to_valves:
-            valve = valves[to_valve]
-            for path in valve.get_paths(num - 1, valves):
-                a = [self.name]
-                paths.append(a + path)
+        new_visited = set(list(visited))
+        new_visited.add(self.name)
+
+        for valve_name, path in self.shortest_paths_useful.items():
+            if valve_name not in new_visited:
+                to_valve = valves[valve_name]
+                new_minutes_left = minutes_left - (len(path) + 1)
+                for p in to_valve.get_paths(new_minutes_left, valves, new_visited):
+                    paths.append([self.name] + p)
         return paths
 
 
@@ -91,6 +103,19 @@ def calculate_flow(path, num_steps, valves):
     return total_pressure, pressure_step
 
 
+def get_best_reward(
+    minutes_left, valve_name, all_names, visited, reward, possible_rewards
+):
+    if minutes_left < 0:
+        return []
+    if valve_name not in visited:
+        reward += possible_rewards[valve_name]
+        visited.add(valve_name)
+    remaining_names = all_names - visited
+    for name in remaining_names:
+        pass
+
+
 def process_input(blob):
     lines = (
         blob.replace("Valve ", "")
@@ -118,6 +143,7 @@ def do_part_1(data):
     valve_names = valves.keys()
     for _, valve in valves.items():
         valve.compute_shortest_paths(valve_names, edges)
+        valve.populate_useful(valves)
 
     edges_2 = []
     for origin, valve in valves.items():
@@ -125,6 +151,29 @@ def do_part_1(data):
             if valves[destination].rate > 0 and origin != destination:
                 edges_2.append((origin, destination, len(path)))
     valve_names_2 = [name for name, valve in valves.items() if valve.rate > 0]
+
+    from_valve = valves["AA"]
+    visited = set()
+    paths = from_valve.get_paths(30, valves, visited)
+    total = 0
+    from_valve = valves["AA"]
+    for p in paths:
+        candidate_total = 0
+        minutes = 0
+        for to_valve_name in p[1:]:
+            to_valve = valves[to_valve_name]
+
+            minutes_needed = len(from_valve.shortest_paths[to_valve_name]) - 1
+            if minutes + minutes_needed > 30:
+                break
+
+            minutes += minutes_needed + 1
+            minutes_left = 30 - minutes
+            candidate_total += minutes_left * to_valve.rate
+            from_valve = to_valve
+        if candidate_total > total:
+            total = candidate_total
+    return total
 
     total = 0
     from_valve = valves["AA"]
