@@ -115,12 +115,19 @@ def do_part_1(data):
     for _, valve in valves.items():
         valve.compute_shortest_paths(valve_names, edges)
 
-    a = valves["AA"].best_next_valve(30, valve_names, valves)
+    current_valve = "AA"
+    total = 0
+    minutes = 30
+    while current_valve:
+        results = valves[current_valve].best_next_valve(minutes, valve_names, valves)
+        if results is None:
+            current_valve = None
+            continue
+        next_valve, value, minutes_left = results
+        total += value
+        minutes = minutes_left
 
-    # print(valves["AA"].get_paths(20, valves))
-    # path = "AA,DD,CC,BB,AA,II,JJ,JJ,II,AA,DD,EE,FF,GG,HH,GG,FF,EE,DD,CC".split(",")
-    # x = calculate_flow(path, 30, valves)
-    return "toto"
+    return total
 
 
 def do_part_2(processed_input):
