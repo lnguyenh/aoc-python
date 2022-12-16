@@ -1,3 +1,5 @@
+from itertools import permutations
+
 from utils.djikstra import djikstra
 
 
@@ -18,9 +20,11 @@ class Valve:
     def best_next_valve(self, minutes, valve_names, valves):
         worth = {}
         for destination in valve_names:
+            if destination == self.name:
+                continue
             if valves[destination].is_open:
                 continue
-            minutes_to_reach = len(self.shortest_paths[destination])
+            minutes_to_reach = len(self.shortest_paths[destination]) - 1
             minutes_left = minutes - minutes_to_reach - 1
             if minutes_left <= 0:
                 continue
@@ -115,6 +119,34 @@ def do_part_1(data):
     for _, valve in valves.items():
         valve.compute_shortest_paths(valve_names, edges)
 
+    edges_2 = []
+    for origin, valve in valves.items():
+        for destination, path in valve.shortest_paths.items():
+            if valves[destination].rate > 0 and origin != destination:
+                edges_2.append((origin, destination, len(path)))
+    valve_names_2 = [name for name, valve in valves.items() if valve.rate > 0]
+
+    total = 0
+    from_valve = valves["AA"]
+    for p in permutations(valve_names_2):
+        candidate_total = 0
+        minutes = 0
+        for to_valve_name in p:
+            to_valve = valves[to_valve_name]
+
+            minutes_needed = len(from_valve.shortest_paths[to_valve_name]) - 1
+            if minutes + minutes_needed > 30:
+                break
+
+            minutes += minutes_needed + 1
+            minutes_left = 30 - minutes
+            candidate_total += minutes_left * to_valve.rate
+            from_valve = to_valve
+        if candidate_total > total:
+            total = candidate_total
+
+    return total
+
     current_valve = "AA"
     total = 0
     minutes = 30
@@ -124,6 +156,8 @@ def do_part_1(data):
             current_valve = None
             continue
         next_valve, value, minutes_left = results
+        current_valve = next_valve
+        valves[current_valve].is_open = True
         total += value
         minutes = minutes_left
 
