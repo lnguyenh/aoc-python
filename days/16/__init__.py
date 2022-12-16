@@ -1,5 +1,3 @@
-from itertools import permutations
-
 from utils.djikstra import djikstra
 
 
@@ -73,16 +71,17 @@ def do_part_1(data):
     visited = set()
     paths = from_valve.get_paths(0, valves, visited)
     total = 0
-    from_valve = valves["AA"]
+
     for p in paths:
         candidate_total = 0
         minutes = 0
         real_path = p[1:]
+        from_valve = valves["AA"]
         for to_valve_name in real_path:
             to_valve = valves[to_valve_name]
 
             minutes_needed = len(from_valve.shortest_paths_useful[to_valve_name]) + 1
-            if minutes + minutes_needed > 30:
+            if minutes + minutes_needed >= 30:
                 break
 
             minutes += minutes_needed
