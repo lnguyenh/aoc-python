@@ -23,11 +23,8 @@ class Valve:
             if valves[valve_name].rate > 0:
                 self.shortest_paths_useful[valve_name] = path[1:]
 
-    def get_paths(self, minutes_left, valves, visited):
-        if (
-            len(self.shortest_paths_useful.keys()) - len(visited) == 0
-            or minutes_left < 0
-        ):
+    def get_paths(self, minutes, valves, visited):
+        if len(self.shortest_paths_useful.keys()) - len(visited) == 0 or minutes >= 30:
             return [[self.name]]
 
         paths = []
@@ -37,8 +34,8 @@ class Valve:
         for valve_name, path in self.shortest_paths_useful.items():
             if valve_name not in new_visited:
                 to_valve = valves[valve_name]
-                new_minutes_left = minutes_left - (len(path) + 1)
-                for p in to_valve.get_paths(new_minutes_left, valves, new_visited):
+                new_minutes = minutes + (len(path) + 1)
+                for p in to_valve.get_paths(new_minutes, valves, new_visited):
                     paths.append([self.name] + p)
         return paths
 
@@ -72,16 +69,9 @@ def do_part_1(data):
         valve.compute_shortest_paths(valve_names, edges)
         valve.populate_useful(valves)
 
-    edges_2 = []
-    for origin, valve in valves.items():
-        for destination, path in valve.shortest_paths.items():
-            if valves[destination].rate > 0 and origin != destination:
-                edges_2.append((origin, destination, len(path)))
-    valve_names_2 = [name for name, valve in valves.items() if valve.rate > 0]
-
     from_valve = valves["AA"]
     visited = set()
-    paths = from_valve.get_paths(30, valves, visited)
+    paths = from_valve.get_paths(0, valves, visited)
     total = 0
     from_valve = valves["AA"]
     for p in paths:
