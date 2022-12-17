@@ -3,8 +3,6 @@ from utils.grid import Point
 
 class Tetris:
     def __init__(self, instruction):
-        self.points = {}
-
         self.instructions = instruction
         self.current_instruction = 0
         self.last_instruction = ""
@@ -12,17 +10,117 @@ class Tetris:
         self.shapes = ["-", "+", "l", "i", "o"]
         self.current_shape = 0
 
+        self.height = 0
+        self.profile = set()
         self.initialize()
 
     def initialize(self):
-        self.points = {}
-        self.points[Point(1, 0)] = "*"
-        self.points[Point(2, 0)] = "*"
-        self.points[Point(3, 0)] = "*"
-        self.points[Point(4, 0)] = "*"
-        self.points[Point(5, 0)] = "*"
-        self.points[Point(6, 0)] = "*"
-        self.points[Point(7, 0)] = "*"
+        self.profile = {
+            (1, 0),
+            (2, 0),
+            (3, 0),
+            (4, 0),
+            (5, 0),
+            (6, 0),
+            (7, 0),
+        }
+        self.height = 0
+
+    def freeze(self, block):
+        for p, value in block.items():
+            self.profile.add((p.x, p.y))
+
+        new_profile = set()
+        x = 1
+        y = max([y for x, y in self.profile if x == 1]) + 1
+
+        delta_height = y - self.height - 1
+        direction = "right"
+
+        visited = set()
+
+        while True:
+            if x == 8:
+                break
+
+            down = (x, y - 1)
+            right = (x + 1, y)
+            up = (x, y + 1)
+            left = (x - 1, y)
+
+            if direction == "right":
+                if down in self.profile:
+                    new_profile.add(down)
+                else:
+                    x, y = down
+                    direction = "down"
+                    continue
+                if right in self.profile:
+                    new_profile.add(right)
+                else:
+                    x, y = right
+                    direction = "right"
+                    continue
+                direction = "up"
+                continue
+            elif direction == "down":
+                if left in self.profile:
+                    new_profile.add(left)
+                else:
+                    x, y = left
+                    direction = "left"
+                    continue
+                if down in self.profile:
+                    new_profile.add(down)
+                else:
+                    x, y = down
+                    direction = "down"
+                    continue
+                direction = "right"
+                continue
+            elif direction == "left":
+                if up in self.profile:
+                    new_profile.add(up)
+                else:
+                    x, y = up
+                    direction = "up"
+                    continue
+                if left in self.profile:
+                    new_profile.add(left)
+                else:
+                    x, y = left
+                    direction = "left"
+                    continue
+                direction = "down"
+                continue
+            elif direction == "up":
+                if right in self.profile:
+                    new_profile.add(right)
+                else:
+                    x, y = right
+                    direction = "right"
+                    continue
+                if up in self.profile:
+                    new_profile.add(up)
+                else:
+                    x, y = up
+                    direction = "up"
+                    continue
+                direction = "left"
+                continue
+
+        self.height = self.height + delta_height
+        new_profile = set([(x, y - delta_height) for x, y in new_profile])
+        self.profile = new_profile
+
+    def save_state(self, num_block):
+        top_30 = []
+        profile = self.get_profile()
+        state = (self.current_instruction, self.current_shape, profile)
+        if state in self.states:
+            print(f"rounds {num_block} and {self.states[state]}")
+            f = 0
+        self.states[state] = num_block
 
     def create_new_shape(self):
         shape = self.shapes[self.current_shape]
@@ -63,9 +161,9 @@ class Tetris:
 
     def block_touches_ground(self, block):
         for b_point in block:
-            for point in self.points:
-                if b_point.x == point.x:
-                    if b_point.y == point.y + 1:
+            for x, y in self.profile:
+                if b_point.x == x:
+                    if b_point.y == y + 1:
                         return True
         return False
 
@@ -73,8 +171,8 @@ class Tetris:
         if any([p.x == 1 for p in block]):
             return True
         for bp in block:
-            for p in self.points:
-                if bp.y == p.y and bp.x == p.x + 1:
+            for x, y in self.profile:
+                if bp.y == y and bp.x == x + 1:
                     return True
         return False
 
@@ -82,20 +180,20 @@ class Tetris:
         if any([p.x == 7 for p in block]):
             return True
         for bp in block:
-            for p in self.points:
-                if bp.y == p.y and bp.x == p.x - 1:
+            for x, y in self.profile:
+                if bp.y == y and bp.x == x - 1:
                     return True
         return False
 
     @property
     def highest_y(self):
-        return max([p.y for p in self.points])
+        return max([y for _, y in self.profile])
 
     def run(self, num_block):
         for _ in range(num_block):
             block = self.create_new_shape()
+
             # self.print(block)
-            v = 0
             while True:
                 block = self.do_horizontal(block)
                 # self.print(block)
@@ -105,7 +203,6 @@ class Tetris:
                     break
                 block = self.move_down(block)
                 # self.print(block)
-                z = 0
 
     def do_horizontal(self, block):
         instruction = self.instructions[self.current_instruction]
@@ -129,19 +226,16 @@ class Tetris:
     def move_down(self, block):
         return {Point(p.x, p.y - 1): value for p, value in block.items()}
 
-    def freeze(self, block):
-        for p, value in block.items():
-            self.points[p] = value
-
     def print(self, block):
         max_y = max([p.y for p in block])
-        for y in range(max_y, -1, -1):
+        min_y = min([y for _, y in self.profile])
+        for y in range(max_y, min_y - 1, -1):
             line = ""
             for x in range(1, 8):
-                p = self.points.get(Point(x, y))
+                p = (x, y) in self.profile
                 b = block.get(Point(x, y))
                 if p:
-                    line += p
+                    line += "#"
                 elif b:
                     line += b
                 else:
@@ -157,7 +251,7 @@ def process_input(blob):
 def do_part_1(jets):
     tetris = Tetris(jets)
     tetris.run(2022)
-    return tetris.highest_y
+    return tetris.highest_y + tetris.height
 
 
 def do_part_2(processed_input):
