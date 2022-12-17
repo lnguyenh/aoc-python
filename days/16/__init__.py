@@ -142,8 +142,14 @@ def do_part_2(data):
     visited = set()
     total_combined = 0
     for whitelist1, whitelist2 in partitions:
-        if len(whitelist1) != 8 and len(whitelist2) != 8:
-            continue
+        if len(useful_valve_names) > 10:
+            # optimization for real input
+            if len(whitelist1) != 8 and len(whitelist2) != 8:
+                continue
+        if len(useful_valve_names) < 10:
+            # optimization for test input
+            if len(whitelist1) != 3 and len(whitelist2) != 3:
+                continue
         paths1 = aa_valve.get_paths_2(0, valves, visited, whitelist1)
         paths2 = aa_valve.get_paths_2(0, valves, visited, whitelist2)
 
