@@ -1,3 +1,6 @@
+from collections import defaultdict
+from math import floor
+
 from utils.grid import Point
 
 
@@ -14,6 +17,8 @@ class Tetris:
         self.profile = set()
         self.initialize()
 
+        self.states = defaultdict(list)
+
     def initialize(self):
         self.profile = {
             (1, 0),
@@ -27,17 +32,19 @@ class Tetris:
         self.height = 0
 
     def freeze(self, block):
+        old_height = max([y for x, y in self.profile if x == 1])
+
         for p, value in block.items():
             self.profile.add((p.x, p.y))
 
+        new_height = max([y for x, y in self.profile if x == 1])
+
         new_profile = set()
         x = 1
-        y = max([y for x, y in self.profile if x == 1]) + 1
+        y = new_height + 1
 
-        delta_height = y - self.height - 1
+        delta_height = new_height - old_height
         direction = "right"
-
-        visited = set()
 
         while True:
             if x == 8:
@@ -113,14 +120,25 @@ class Tetris:
         new_profile = set([(x, y - delta_height) for x, y in new_profile])
         self.profile = new_profile
 
-    def save_state(self, num_block):
-        top_30 = []
-        profile = self.get_profile()
-        state = (self.current_instruction, self.current_shape, profile)
+    def check_state(self, num_block, target):
+        state = tuple(self.profile), self.current_instruction, self.current_shape
         if state in self.states:
-            print(f"rounds {num_block} and {self.states[state]}")
-            f = 0
-        self.states[state] = num_block
+            self.states[state].append((num_block, self.height))
+            print(f"found {state}: {self.states[state]}")
+            times = int(
+                floor(
+                    (target - self.states[state][0][0])
+                    / (num_block - self.states[state][0][0])
+                )
+            )
+            self.height = self.states[state][0][1] + times * (
+                self.height - self.states[state][0][1]
+            )
+            return (target - self.states[state][0][0]) % (
+                num_block - self.states[state][0][0]
+            )
+        self.states[state].append((num_block, self.height))
+        return None
 
     def create_new_shape(self):
         shape = self.shapes[self.current_shape]
@@ -190,7 +208,7 @@ class Tetris:
         return max([y for _, y in self.profile])
 
     def run(self, num_block):
-        for _ in range(num_block):
+        for i in range(num_block):
             block = self.create_new_shape()
 
             # self.print(block)
@@ -200,6 +218,25 @@ class Tetris:
                 if self.block_touches_ground(block):
                     self.freeze(block)
                     # self.print(block)
+                    break
+                block = self.move_down(block)
+                # self.print(block)
+
+    def find_loop(self, num_blocks):
+        i = 0
+        while True:
+            i += 1
+            block = self.create_new_shape()
+
+            # self.print(block)
+            while True:
+                block = self.do_horizontal(block)
+                # self.print(block)
+                if self.block_touches_ground(block):
+                    self.freeze(block)
+                    remaining_blocks = self.check_state(i, num_blocks)
+                    if remaining_blocks is not None:
+                        return self.run(remaining_blocks)
                     break
                 block = self.move_down(block)
                 # self.print(block)
@@ -254,5 +291,7 @@ def do_part_1(jets):
     return tetris.highest_y + tetris.height
 
 
-def do_part_2(processed_input):
-    return "toto"
+def do_part_2(jets):
+    tetris = Tetris(jets)
+    tetris.find_loop(1000000000000)
+    return tetris.highest_y + tetris.height
