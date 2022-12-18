@@ -81,3 +81,8 @@ print(grid)
 
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
+- Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
+  - Depth first algorithm (visits all nodes in a graph once) DFS. Maybe https://github.com/Andrew-Foote/aoc/blob/master/solutions/python/lib/graph.py for inspiration
+  - Breadth first algorithm BFS
+  - DEAP: https://deap.readthedocs.io/en/master/ some kind of crazy algorithm library (seems to have a learning curve to be able to use it)
+  - Reward driven research papers and stack overflow discussion: https://stackoverflow.com/questions/48152370/reasonably-efficient-algorithm-for-reward-driven-graph-traversal
