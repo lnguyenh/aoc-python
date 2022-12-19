@@ -1,32 +1,11 @@
 NUM_TURNS = 24
 
-MAX_PER_TURN = [
-    sum(range(1, 25)),
-    sum(range(1, 24)),
-    sum(range(1, 23)),
-    sum(range(1, 22)),
-    sum(range(1, 21)),
-    sum(range(1, 20)),
-    sum(range(1, 19)),
-    sum(range(1, 18)),
-    sum(range(1, 17)),
-    sum(range(1, 16)),
-    sum(range(1, 15)),
-    sum(range(1, 14)),
-    sum(range(1, 13)),
-    sum(range(1, 12)),
-    sum(range(1, 11)),
-    sum(range(1, 10)),
-    sum(range(1, 9)),
-    sum(range(1, 8)),
-    sum(range(1, 7)),
-    sum(range(1, 6)),
-    sum(range(1, 5)),
-    sum(range(1, 4)),
-    sum(range(1, 3)),
-    1,
-    0,
-]
+num_bots = 1
+PRODUCED = []
+for _ in range(NUM_TURNS):
+    already_produced = sum(PRODUCED)
+    PRODUCED.append(num_bots + already_produced)
+    num_bots += 1
 
 
 def process_input(blob):
@@ -74,26 +53,23 @@ class Factory:
 
         self.current_best = 0
         self.earliest_geode_bot_turn = None
+        self.earliest_obsidian_bot_turn = None
+        self.earliest_clay_bot_turn = None
 
-    def one_minute(self):
-        self.spend()
-        self.harvest()
-        self.harvest_robot()
+        self.reached_end_once = False
 
-    def build_nodes(self):
-        nodes = {}
-        for i in reversed(range(24)):
-            if i == 23:
-                nodes[f"or-{i}"] = []
-                nodes[f"c-{i}"] = []
-                nodes[f"ob-{i}"] = []
-                nodes[f"g-{i}"] = []
-            else:
-                nodes[f"or-{i}"] = [f"or-{i}", f"c-{i}", f"ob-{i}", f"g-{i}"]
-                nodes[f"c-{i}"] = [f"or-{i}", f"c-{i}", f"ob-{i}", f"g-{i}"]
-                nodes[f"ob-{i}"] = [f"or-{i}", f"c-{i}", f"ob-{i}", f"g-{i}"]
-                nodes[f"g-{i}"] = [f"or-{i}", f"c-{i}", f"ob-{i}", f"g-{i}"]
-        return nodes
+        self.last_turn_to_get_one_obsidian_bot = None
+        for i in range(len(PRODUCED) - 1):
+            if PRODUCED[i] <= self.blueprint["geode"][1] < PRODUCED[i + 1]:
+                self.last_turn_to_get_one_obsidian_bot = (NUM_TURNS - 1) - (i + 1) - 1
+
+        self.last_turn_to_get_one_clay_bot = None
+        for i in range(len(PRODUCED) - 1):
+            if PRODUCED[i] <= self.blueprint["obsidian"][1] < PRODUCED[i + 1]:
+                self.last_turn_to_get_one_clay_bot = (
+                    self.last_turn_to_get_one_obsidian_bot - (i + 1) - 1
+                )
+        self.toto = 1
 
     def has_enough_for_ore_robot(self, resources):
         return self.blueprint["ore"] <= resources[0]
@@ -141,6 +117,8 @@ class Factory:
     def find_best_path(self, robots, resources, i):
 
         if i == NUM_TURNS:
+            if not self.reached_end_once:
+                self.reached_end_once = True
             return resources[3]
 
         # we receive our resources for this turn
@@ -161,10 +139,19 @@ class Factory:
             updated_new_resources = self.resources_post_purchase(new_resources, 2)
             possibles.append((new_robots, updated_new_resources, i + 1))
 
+            if (
+                self.earliest_obsidian_bot_turn is None
+                or i < self.earliest_obsidian_bot_turn
+            ):
+                self.earliest_obsidian_bot_turn = i
+
         if self.has_enough_for_clay_robot(resources):  # based on old resources
             new_robots = self.get_new_robots(robots, 1)
             updated_new_resources = self.resources_post_purchase(new_resources, 1)
             possibles.append((new_robots, updated_new_resources, i + 1))
+
+            if self.earliest_clay_bot_turn is None or i < self.earliest_clay_bot_turn:
+                self.earliest_clay_bot_turn = i
 
         if self.has_enough_for_ore_robot(resources):  # based on old resources
             new_robots = self.get_new_robots(robots, 0)
@@ -175,28 +162,21 @@ class Factory:
         possibles.append((new_robots, new_resources, i + 1))
 
         for possible in possibles:
+            # try to break out as early as possible
             if (
-                possible[0][3] == 0
-                and self.earliest_geode_bot_turn
-                and i + 1 > self.earliest_geode_bot_turn
+                (
+                    possible[0][3] == 0
+                    and self.earliest_geode_bot_turn
+                    and i + 1 > self.earliest_geode_bot_turn
+                )
+                or (possible[0][2] == 0 and i >= self.last_turn_to_get_one_obsidian_bot)
+                or (possible[0][1] == 0 and i >= self.last_turn_to_get_one_clay_bot)
             ):
                 continue
             num_geodes = self.find_best_path(*possible)
             if num_geodes > self.current_best:
                 self.current_best = num_geodes
         return self.current_best
-
-    def harvest(self):
-        self.ore += self.ore_robots
-        self.clay += self.clay_robots
-        self.obsidians += self.obsidian_robots
-        self.geodes += self.geode_robots
-
-    def spend(self):
-        return
-
-    def harvest_robot(self):
-        return
 
 
 def do_part_1(blueprints):
