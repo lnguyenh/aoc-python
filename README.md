@@ -89,6 +89,9 @@ import functools
       return ....
 ```
 
+### Tree pruning
+Day 19 is an example of DFS with playing with conditions to reduce the possibility space.
+
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
 - Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
