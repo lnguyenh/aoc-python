@@ -90,30 +90,48 @@ class Factory:
         new_robots[i] += 1
         return new_robots
 
+    def resources_post_purchase(self, resources, i):
+        new_resources = resources[:]
+        if i == 0:
+            new_resources[0] -= self.blueprint["ore"]
+        elif i == 1:
+            new_resources[0] -= self.blueprint["clay"]
+        elif i == 2:
+            new_resources[0] -= self.blueprint["obsidian"][0]
+            new_resources[1] -= self.blueprint["obsidian"][1]
+        elif i == 3:
+            new_resources[0] -= self.blueprint["geode"][0]
+            new_resources[2] -= self.blueprint["geode"][1]
+        return new_resources
+
     def find_best_path(self, robots, resources, i):
         if i > 23:
             return robots[3] + resources[3]
 
         possibles = []
 
+        # we receive our resources for this turn
         new_resources = self.get_new_resources(robots, resources)
 
         if self.has_enough_for_ore_robot(resources):
-            made_one = True
             new_robots = self.get_new_robots(robots, 0)
-            possibles.append((new_robots, new_resources, i + 1))
+            updated_new_resources = self.resources_post_purchase(new_resources, 0)
+            possibles.append((new_robots, updated_new_resources, i + 1))
 
         if self.has_enough_for_clay_robot(resources):
             new_robots = self.get_new_robots(robots, 1)
-            possibles.append((new_robots, new_resources, i + 1))
+            updated_new_resources = self.resources_post_purchase(new_resources, 1)
+            possibles.append((new_robots, updated_new_resources, i + 1))
 
         if self.has_enough_for_obsidian_robot(resources):
             new_robots = self.get_new_robots(robots, 2)
-            possibles.append((new_robots, new_resources, i + 1))
+            updated_new_resources = self.resources_post_purchase(new_resources, 2)
+            possibles.append((new_robots, updated_new_resources, i + 1))
 
         if self.has_enough_for_geode_robot(resources):
             new_robots = self.get_new_robots(robots, 3)
-            possibles.append((new_robots, new_resources, i + 1))
+            updated_new_resources = self.resources_post_purchase(new_resources, 3)
+            possibles.append((new_robots, updated_new_resources, i + 1))
 
         new_robots = robots[:]
         possibles.append((new_robots, new_resources, i + 1))
@@ -137,7 +155,9 @@ def do_part_1(blueprints):
     geodes = []
     for name, blueprint in blueprints:
         factory = Factory(name, blueprint)
-        geodes.append(factory.find_best_path([1, 0, 0, 0], [0, 0, 0, 0], 0))
+        m = factory.find_best_path([1, 0, 0, 0], [0, 0, 0, 0], 0)
+        print(f"{factory.name} - max: {m}")
+        geodes.append(m)
     return "toto"
 
 
