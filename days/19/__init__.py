@@ -63,6 +63,17 @@ class Factory:
 
         self.reached_end_once = False
 
+        self.max_ore = max(
+            [
+                self.blueprint["obsidian"][0],
+                self.blueprint["ore"],
+                self.blueprint["clay"],
+                self.blueprint["geode"][0],
+            ]
+        )
+        self.max_clay = self.blueprint["obsidian"][1]
+        self.max_obsidian = self.blueprint["geode"][1]
+
         # Kinda trying to optimize breaking out of the big recursion
         # Not great optimization, but I think it helps some
         self.last_turn_to_get_one_obsidian_bot = None
@@ -163,9 +174,12 @@ class Factory:
             if self.earliest_geode_bot_turn is None or i < self.earliest_geode_bot_turn:
                 self.earliest_geode_bot_turn = i
 
-        if not go_in_geode_robot_mode and self.has_enough_for_obsidian_robot(
-            resources
-        ):  # based on old resources
+        if (
+            not go_in_geode_robot_mode
+            and self.has_enough_for_obsidian_robot(resources)
+            and not robots[2] >= self.max_obsidian
+        ):
+            # based on old resources
             new_robots = self.get_new_robots(robots, 2)
             updated_new_resources = self.resources_post_purchase(new_resources, 2)
             possibles.append((new_robots, updated_new_resources, i + 1))
@@ -176,8 +190,10 @@ class Factory:
             ):
                 self.earliest_obsidian_bot_turn = i
 
-        if not go_in_geode_robot_mode and self.has_enough_for_clay_robot(
-            resources
+        if (
+            not go_in_geode_robot_mode
+            and self.has_enough_for_clay_robot(resources)
+            and not robots[0] >= self.max_clay
         ):  # based on old resources
             new_robots = self.get_new_robots(robots, 1)
             updated_new_resources = self.resources_post_purchase(new_resources, 1)
@@ -186,8 +202,10 @@ class Factory:
             if self.earliest_clay_bot_turn is None or i < self.earliest_clay_bot_turn:
                 self.earliest_clay_bot_turn = i
 
-        if not go_in_geode_robot_mode and self.has_enough_for_ore_robot(
-            resources
+        if (
+            not go_in_geode_robot_mode
+            and self.has_enough_for_ore_robot(resources)
+            and not robots[0] >= self.max_ore
         ):  # based on old resources
             new_robots = self.get_new_robots(robots, 0)
             updated_new_resources = self.resources_post_purchase(new_resources, 0)
