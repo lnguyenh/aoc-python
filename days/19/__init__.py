@@ -1,3 +1,5 @@
+import functools
+
 NUM_TURNS = 24
 
 num_bots = 1
@@ -93,15 +95,15 @@ class Factory:
         new_resources = []
         for i in range(len(robots)):
             new_resources.append(robots[i] + resources[i])
-        return new_resources
+        return tuple(new_resources)
 
     def get_new_robots(self, robots, i):
-        new_robots = robots[:]
+        new_robots = list(robots)
         new_robots[i] += 1
-        return new_robots
+        return tuple(new_robots)
 
     def resources_post_purchase(self, resources, i):
-        new_resources = resources[:]
+        new_resources = list(resources)
         if i == 0:
             new_resources[0] -= self.blueprint["ore"]
         elif i == 1:
@@ -112,8 +114,9 @@ class Factory:
         elif i == 3:
             new_resources[0] -= self.blueprint["geode"][0]
             new_resources[2] -= self.blueprint["geode"][1]
-        return new_resources
+        return tuple(new_resources)
 
+    @functools.cache
     def find_best_path(self, robots, resources, i):
 
         if i == NUM_TURNS:
@@ -169,8 +172,12 @@ class Factory:
                     and self.earliest_geode_bot_turn
                     and i + 1 > self.earliest_geode_bot_turn
                 )
-                or (possible[0][2] == 0 and i >= self.last_turn_to_get_one_obsidian_bot)
-                or (possible[0][1] == 0 and i >= self.last_turn_to_get_one_clay_bot)
+                or (
+                    possible[0][2] == 0
+                    and i + 1 >= self.last_turn_to_get_one_obsidian_bot
+                )
+                or (possible[0][1] == 0 and i + 1 >= self.last_turn_to_get_one_clay_bot)
+                or ((i + 1) >= NUM_TURNS - 1 and possible[0][3] == 0)
             ):
                 continue
             num_geodes = self.find_best_path(*possible)
@@ -183,7 +190,7 @@ def do_part_1(blueprints):
     geodes = []
     for name, blueprint in blueprints:
         factory = Factory(name, blueprint)
-        m = factory.find_best_path([1, 0, 0, 0], [0, 0, 0, 0], 0)
+        m = factory.find_best_path((1, 0, 0, 0), (0, 0, 0, 0), 0)
         print(f"{factory.name} - max: {m}")
         geodes.append((m, int(factory.name)))
     print(geodes)
