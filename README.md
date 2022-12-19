@@ -79,6 +79,16 @@ grid[y][x] = 7
 print(grid)
 ```
 
+### Caching results for repetitive calls with same arguments
+```
+import functools
+    ...
+    
+    @functools.cache
+    def find_best_path(self, robots, resources, i):
+      return ....
+```
+
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
 - Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
