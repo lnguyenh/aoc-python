@@ -43,6 +43,26 @@ def find_target(node, nodes):
     return target_node
 
 
+def find_target_2(node, nodes):
+    steps = node.value
+    previous_node = nodes[node.p]
+    target_node = previous_node
+
+    if steps > 0:
+        steps = steps % (len(nodes) - 1)
+        if steps == 0:
+            return target_node
+        for _ in range(steps + 1):
+            target_node = nodes[target_node.n]
+    elif steps < 0:
+        steps = -steps
+        steps = steps % (len(nodes) - 1)
+        for _ in range(steps):
+            target_node = nodes[target_node.p]
+
+    return target_node
+
+
 def unlink_node(node, nodes):
     previous_node = nodes[node.p]
     next_node = nodes[node.n]
@@ -81,12 +101,36 @@ def move(nodes, node, steps):
 
 
 def do_part_1(nodes):
-    print_nodes(nodes)
+    return None
+    # for node in nodes:
+    #     target_node = find_target(node, nodes)
+    #     if target_node.n != node.i and node.value != 0:
+    #         unlink_node(node, nodes)
+    #         insert_after(node, target_node, nodes)
+    #
+    # zero_node = None
+    # for node in nodes:
+    #     if node.value == 0:
+    #         zero_node = node
+    #         break
+    # th1000 = move(nodes, zero_node, 1000)
+    # th2000 = move(nodes, th1000, 1000)
+    # th3000 = move(nodes, th2000, 1000)
+    # v1, v2, v3 = th1000.value, th2000.value, th3000.value
+    # print(v1, v2, v3)
+    # return v1 + v2 + v3
+
+
+def do_part_2(nodes):
     for node in nodes:
-        target_node = find_target(node, nodes)
-        if target_node.n != node.i and node.value != 0:
-            unlink_node(node, nodes)
-            insert_after(node, target_node, nodes)
+        node.value = node.value * 811589153
+
+    for _ in range(10):
+        for node in nodes:
+            target_node = find_target_2(node, nodes)
+            if node.value != 0:
+                unlink_node(node, nodes)
+                insert_after(node, target_node, nodes)
 
     zero_node = None
     for node in nodes:
@@ -99,9 +143,3 @@ def do_part_1(nodes):
     v1, v2, v3 = th1000.value, th2000.value, th3000.value
     print(v1, v2, v3)
     return v1 + v2 + v3
-
-    return "toto"
-
-
-def do_part_2(processed_input):
-    return "toto"
