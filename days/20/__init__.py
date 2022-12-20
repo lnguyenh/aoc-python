@@ -13,6 +13,10 @@ class Node:
 
 
 def process_input(blob):
+    return blob
+
+
+def get_nodes(blob):
     nodes = [Node(int(x), i) for i, x in enumerate(blob.split("\n"))]
     for i, node in enumerate(nodes):
         if i == 0:
@@ -100,28 +104,28 @@ def move(nodes, node, steps):
     return current
 
 
-def do_part_1(nodes):
-    return None
-    # for node in nodes:
-    #     target_node = find_target(node, nodes)
-    #     if target_node.n != node.i and node.value != 0:
-    #         unlink_node(node, nodes)
-    #         insert_after(node, target_node, nodes)
-    #
-    # zero_node = None
-    # for node in nodes:
-    #     if node.value == 0:
-    #         zero_node = node
-    #         break
-    # th1000 = move(nodes, zero_node, 1000)
-    # th2000 = move(nodes, th1000, 1000)
-    # th3000 = move(nodes, th2000, 1000)
-    # v1, v2, v3 = th1000.value, th2000.value, th3000.value
-    # print(v1, v2, v3)
-    # return v1 + v2 + v3
+def do_part_1(blob):
+    nodes = get_nodes(blob)
+    for node in nodes:
+        target_node = find_target(node, nodes)
+        if target_node.n != node.i and node.value != 0:
+            unlink_node(node, nodes)
+            insert_after(node, target_node, nodes)
+
+    zero_node = None
+    for node in nodes:
+        if node.value == 0:
+            zero_node = node
+            break
+    th1000 = move(nodes, zero_node, 1000)
+    th2000 = move(nodes, th1000, 1000)
+    th3000 = move(nodes, th2000, 1000)
+    v1, v2, v3 = th1000.value, th2000.value, th3000.value
+    return v1 + v2 + v3
 
 
-def do_part_2(nodes):
+def do_part_2(blob):
+    nodes = get_nodes(blob)
     for node in nodes:
         node.value = node.value * 811589153
 
@@ -141,5 +145,4 @@ def do_part_2(nodes):
     th2000 = move(nodes, th1000, 1000)
     th3000 = move(nodes, th2000, 1000)
     v1, v2, v3 = th1000.value, th2000.value, th3000.value
-    print(v1, v2, v3)
     return v1 + v2 + v3
