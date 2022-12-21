@@ -60,14 +60,15 @@ def do_part_1(blob):
 
 
 def do_part_2(blob):
+    # Create monkeys with the special setup for part 2
     monkeys = {}
     for line in blob.split("\n"):
         name, text = line.split(": ")
         monkeys[name] = text
-
     monkeys["humn"] = "X"
     monkeys["root"] = monkeys["root"].replace("+", "=")
 
+    # Deal with the monkeys that already have a number from the get-go
     int_monkeys = {name: text for name, text in monkeys.items() if text.isnumeric()}
     for name in int_monkeys:
         monkeys.pop(name)
@@ -75,6 +76,7 @@ def do_part_2(blob):
         for n in monkeys:
             monkeys[n] = monkeys[n].replace(name, text)
 
+    # Replace strings when possible to get to a single equation with only one unknown
     while True:
         num_replaces = 0
         to_pop = []
