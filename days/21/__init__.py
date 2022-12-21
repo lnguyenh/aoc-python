@@ -1,3 +1,6 @@
+from sympy import solve, symbols
+
+
 class Monkey:
     def __init__(self, name, text):
         self.name = name
@@ -90,6 +93,12 @@ def do_part_2(blob):
         if num_replaces == 0:
             break
 
-    print(monkeys["root"])
+    # print(monkeys["root"])
 
-    return "Use the printed equation above in https://www.mathpapa.com/simplify-calculator/ to find the solution"
+    # Solve the simple (but long) equation using sympy
+    # It also works to copy-paste what is printed if you uncomment line 96 into
+    # https://www.mathpapa.com/simplify-calculator/ which is how I solved the problem
+    # originally
+    X = symbols("x")
+    equation_equal_zero = "-".join(monkeys["root"].split("="))
+    return int(solve(equation_equal_zero)[0])
