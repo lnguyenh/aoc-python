@@ -113,3 +113,5 @@ a.rotate(-3)
   - Breadth first algorithm BFS
   - DEAP: https://deap.readthedocs.io/en/master/ some kind of crazy algorithm library (seems to have a learning curve to be able to use it)
   - Reward driven research papers and stack overflow discussion: https://stackoverflow.com/questions/48152370/reasonably-efficient-algorithm-for-reward-driven-graph-traversal
+  - Categorization of aoc problems over the years https://www.reddit.com/r/adventofcode/comments/z0vmy0/350_stars_a_categorization_and_megaguide/
+  
