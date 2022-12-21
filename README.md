@@ -115,6 +115,16 @@ solve("x*4-2")
 >> [1/2]
 ```
 
+### Parse
+
+```
+import parse
+PATTERN = parse.compile("{outer_color} bags contain {num:d} {inner_color} bags.")
+match = PATTERN.search("shiny gold bags contain 2 dark red bags.")
+match.named
+>> {'outer_color': 'shiny gold', 'num': 2, 'inner_color': 'dark red'}
+```
+
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
 - Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
