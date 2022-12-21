@@ -92,6 +92,20 @@ import functools
 ### Tree pruning
 Day 19 is an example of DFS with playing with conditions to reduce the possibility space.
 
+### Deque rotation
+```
+from collections import deque
+
+a = deque([1, 2, 3, 4, 5, 6, 7, 8, 9])
+>> deque([1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+a.rotate(3)
+>> deque([7, 8, 9, 1, 2, 3, 4, 5, 6])
+
+a.rotate(-3)
+>> deque([1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
 - Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
