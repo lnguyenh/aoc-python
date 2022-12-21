@@ -106,6 +106,15 @@ a.rotate(-3)
 >> deque([1, 2, 3, 4, 5, 6, 7, 8, 9])
 ```
 
+### Sympy equation solving
+```
+from sympy import solve, symbols
+x = symbols('x')
+solve("x*4-2")
+
+>> [1/2]
+```
+
 ### Maybe worth looking at some day
 - Interval tree concept: https://en.wikipedia.org/wiki/Interval_tree
 - Graph words/things/links for inspiration if stuck some day, or to make some libraries from:
