@@ -7,8 +7,6 @@ class Field:
         self.populate_grid(lines)
         self.direction = 0
 
-        self.candidates = {}
-
     def populate_grid(self, lines):
         for j, line in enumerate(lines):
             for i, c in enumerate(line):
@@ -37,7 +35,6 @@ class Field:
         return turn
 
     def play_one_round(self):
-        self.candidates = {}
         direction = self.direction
 
         movable_elves = set(self.grid.keys())
@@ -61,8 +58,6 @@ class Field:
 
         for x, y in immobile_elves:
             movable_elves.remove((x, y))
-
-        toto = 0
 
         # Populate candidates
         for _ in range(4):
