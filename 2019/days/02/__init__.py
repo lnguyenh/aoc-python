@@ -1,6 +1,7 @@
 class IntCode:
     def __init__(self, program):
-        self.p = program
+        self.p = program[:]
+        self.original_program = program
 
     def run_one(self, i):
         instr = self.p[i]
@@ -27,6 +28,9 @@ class IntCode:
     def set(self, value, index):
         self.p[index] = value
 
+    def reset(self):
+        self.p = self.original_program[:]
+
 
 def process_input(blob):
     return [int(n) for n in blob.split(",")]
@@ -43,7 +47,15 @@ def do_part_1(processed_input):
 
 
 def do_part_2(processed_input):
-    return "toto"
+    intcode = IntCode(processed_input)
+    for noun in range(100):
+        for verb in range(100):
+            intcode.reset()
+            intcode.set(noun, 1)
+            intcode.set(verb, 2)
+            intcode.run()
+            if intcode.get_value(0) == 19690720:
+                return 100 * noun + verb
 
 
 def do_visualization(processed_input):
