@@ -19,7 +19,8 @@ def get_input_path(day, test, filename):
 @click.option("--day", default="", help="AOC day to run")
 @click.option("--test", is_flag=True)
 @click.option("--filename", default="", help="Input file name")
-def run(day, test, filename):
+@click.option("--visu", is_flag=True)
+def run(day, test, filename, visu):
     # Setup
     if not day:
         # Use today's day of the month
@@ -36,6 +37,11 @@ def run(day, test, filename):
 
     # Get processed input
     processed_input = day_module.process_input(raw_input)
+
+    # Visualization
+    if visu:
+        day_module.do_visualization(processed_input)
+        return
 
     # Run part 1
     t0 = datetime.now()
