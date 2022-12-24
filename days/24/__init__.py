@@ -129,9 +129,13 @@ class Valley:
 
         for x, y in self.grid.keys():
             plot_grid[y][x] = 50  # walls
-        for x, y in self.b:
-            plot_grid[y][x] = 100  # tornados
 
+        val = 80
+        multiple = 50
+        for i, key in enumerate(self.blizzards):
+            color = i * 5 + val
+            for x, y in self.blizzards[key]:
+                plot_grid[y][x] = color if not plot_grid[y][x] else multiple
         return plot_grid
 
     def animate(self):
