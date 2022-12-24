@@ -8,3 +8,7 @@ def do_part_1(processed_input):
 
 def do_part_2(processed_input):
     return "toto"
+
+
+def do_visualization(processed_input):
+    return None

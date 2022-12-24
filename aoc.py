@@ -5,31 +5,35 @@ import click
 
 from utils.time import timedelta_in_ms
 
-TEST_INPUT_DIRECTORY = "./inputs/test/"
-INPUT_DIRECTORY = "./inputs/"
+TEST_INPUT_DIRECTORY = "/inputs/test/"
+INPUT_DIRECTORY = "/inputs/"
 
 
-def get_input_path(day, test, filename):
-    path = TEST_INPUT_DIRECTORY if test else INPUT_DIRECTORY
+def get_input_path(year, day, test, filename):
+    path = f"{year}{TEST_INPUT_DIRECTORY}" if test else f"{year}{INPUT_DIRECTORY}"
     filename = filename if filename else f"{day}.txt"
     return path + filename
 
 
 @click.command()
+@click.option("--year", default="", help="AOC year to run")
 @click.option("--day", default="", help="AOC day to run")
 @click.option("--test", is_flag=True)
 @click.option("--filename", default="", help="Input file name")
 @click.option("--visu", is_flag=True)
-def run(day, test, filename, visu):
+def run(year, day, test, filename, visu):
     # Setup
+    if not year:
+        # Use today's year
+        year = datetime.now().strftime("%Y")
     if not day:
         # Use today's day of the month
         day = datetime.now().strftime("%d")
-    input_path = get_input_path(day, test, filename)
+    input_path = get_input_path(year, day, test, filename)
     print(f"Running AOC day {day}{' IN TEST MODE' if test else ''} using {input_path}")
 
     # Import the module for the day
-    day_module = import_module(f"days.{day}")
+    day_module = import_module(f"{year}.days.{day}")
 
     # Read the raw input
     with open(input_path, "r") as file:

@@ -1,6 +1,6 @@
 # example: "make prepare day=03"
 prepare:
-	touch ./inputs/$(day).txt
-	touch ./inputs/test/$(day).txt
-	mkdir ./days/$(day)
-	cp -r ./days/00/__init__.py ./days/$(day)/
+	touch ./2019/inputs/$(day).txt
+	touch ./2019/inputs/test/$(day).txt
+	mkdir ./2019/days/$(day)
+	cp -r ./2022/days/00/__init__.py ./2019/days/$(day)/
