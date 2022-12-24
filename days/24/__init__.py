@@ -43,6 +43,7 @@ class Valley:
     def edges_for_n_minutes(self, n):
         edges = []
         for t in range(n):
+            new_edges = []
             print(f"Minute {t}")
             self.print()
             toto = 1
@@ -52,24 +53,22 @@ class Valley:
                     if self.grid.get(point) or (point in self.b):
                         continue
 
-                    edges.append(((x, y, t), (x, y, t + 1), 1))  # stay same position
+                    new_edges.append(
+                        ((x, y, t - 1), (x, y, t), 1)
+                    )  # stay same position
 
-                    candidates = [
-                        (x - 1, y - 1),
+                    origins = [
                         (x, y - 1),
-                        (x + 1, y - 1),
                         (x - 1, y),
                         (x + 1, y),
-                        (x - 1, y + 1),
                         (x, y + 1),
-                        (x + 1, y + 1),
                     ]
-                    for x2, y2 in candidates:
-                        if not (self.grid.get(point) or (point in self.b)):
-                            if (x2, y2) == self.destination:
-                                edges.append(((x, y, t), self.destination, 1))
-                            else:
-                                edges.append(((x, y, t), (x2, y2, t + 1), 1))
+                    for x2, y2 in origins:
+                        if (x, y) == self.destination:
+                            new_edges.append(((x2, y2, t - 1), (x, y), 1))
+                        else:
+                            new_edges.append(((x2, y2, t - 1), (x, y, t), 1))
+            edges.extend(new_edges)
 
             self.move_blizzards()
         return edges
@@ -106,8 +105,10 @@ def process_input(blob):
 def do_part_1(lines):
     valley = Valley(lines)
     edges = valley.edges_for_n_minutes(30)
-    print(djikstra(edges, valley.start, valley.destination))
-    return None
+    cost, path = djikstra(edges, valley.start, valley.destination)
+    print(cost)
+    print(path)
+    return cost
 
 
 def do_part_2(processed_input):
