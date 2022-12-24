@@ -6,8 +6,6 @@ import numpy
 
 from utils.djikstra import djikstra
 
-N = 300
-
 
 class Valley:
     def __init__(self, lines):
@@ -153,7 +151,10 @@ def process_input(blob):
 
 def do_part_1(processed_input):
     valley, lines = processed_input
-    edges = valley.edges_for_n_minutes(N)
+
+    max_minutes = 40 if len(lines) < 30 else 300
+
+    edges = valley.edges_for_n_minutes(max_minutes)
     cost, path = djikstra(edges, (1, 0, 0), valley.destination)
     # print(cost)
     # print(path)
@@ -168,22 +169,25 @@ def do_part_1(processed_input):
 
 def do_part_2(processed_input):
     _, lines = processed_input
+
+    max_minutes = 40 if len(lines) < 30 else 300
+
     valley1 = Valley(lines)
     valley2 = Valley(lines)
     valley3 = Valley(lines)
 
     # Go
     valley1.destination = valley1.p2
-    edges = valley1.edges_for_n_minutes(N)
+    edges = valley1.edges_for_n_minutes(max_minutes)
     cost, path1 = djikstra(edges, valley1.p1 + (0,), valley1.destination)
     # print(cost)
     # print(path1)
-    step1 = int(cost) + 1
+    step1 = int(cost)
 
     # Back
     valley2.destination = valley2.p1
     _ = valley2.edges_for_n_minutes(step1)
-    edges = valley2.edges_for_n_minutes(N)
+    edges = valley2.edges_for_n_minutes(max_minutes)
     cost, path2 = djikstra(edges, valley2.p2 + (0,), valley2.destination)
     # print(cost)
     # print(path2)
@@ -192,14 +196,14 @@ def do_part_2(processed_input):
     # Go
     valley3.destination = valley3.p2
     _ = valley3.edges_for_n_minutes(step2)
-    edges = valley3.edges_for_n_minutes(N)
+    edges = valley3.edges_for_n_minutes(max_minutes)
     cost, path3 = djikstra(edges, valley3.p1 + (0,), valley3.destination)
     # print(cost)
     # print(path3)
 
     # Visu
     valley_p = Valley(lines)
-    valley_p.path = path1[1:] + path2 + path3[1:]
+    valley_p.path = path1[1:] + path2[1:] + path3[1:]
     valley_p.initialize_plot()
     valley_p.animate()
 
