@@ -117,7 +117,7 @@ class Valley:
 
     def initialize_plot(self):
         plt.ion()
-        self.fig = plt.figure(figsize=(18, 6))
+        self.fig = plt.figure(figsize=(18, 9))
         self.im = plt.imshow(self.get_grid((1, 0)), aspect="auto")
         plt.axis("off")
         plt.show()
