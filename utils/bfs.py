@@ -4,6 +4,7 @@ from collections import defaultdict, deque
 def bfs(edges, start, destination):
     """
     Gets shortest path from start to destination using BFS
+    Good for graphs when cost between nodes is always equal
     """
 
     # neighbours / graph
@@ -30,6 +31,8 @@ def bfs(edges, start, destination):
         path = paths.pop()
         node = path[-1]
 
+        # Getting the neighbours could be made dynamic for some aoc problems
+        # based on problem rules instead of hardcoded list of edges
         for neighbour in neighbours[node]:
             if visited[neighbour]:
                 continue
@@ -54,6 +57,7 @@ if __name__ == "__main__":
         ("C", "G"),
         ("G", "H"),
         ("E", "D"),
+        ("C", "D"),
     ]
     print("A -> D:")
     print(bfs(edges, "A", "D"))

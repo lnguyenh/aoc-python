@@ -4,6 +4,10 @@ from heapq import heappop, heappush
 
 # https://gist.github.com/kachayev/5990802
 def djikstra(edges, start, destination):
+    """
+    Gets shortest path from start to destination using Djisktra
+    Good for graphs when cost between nodes is not equal
+    """
     # edges are tuples: (start-node-name, end-node-name, cost)
     nodes = defaultdict(list)
     for from_node, to_node, cost in edges:
