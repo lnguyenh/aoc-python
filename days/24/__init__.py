@@ -1,4 +1,8 @@
 from collections import defaultdict
+import time
+
+import matplotlib.pyplot as plt
+import numpy
 
 from utils.djikstra import djikstra
 
@@ -19,6 +23,13 @@ class Valley:
         self.destination = self.p2
 
         self.one_way = 0
+
+        # Matplotlib stuff
+        self.path = []
+        self.done = False
+        self.fig = None
+        self.im = None
+        self.ani = None
 
     def initialize(self, lines):
         for j, line in enumerate(lines):
@@ -104,6 +115,36 @@ class Valley:
         self.blizzards = new_blizzards
         self.b = new_positions
 
+    def initialize_plot(self):
+        plt.ion()
+        self.fig = plt.figure(figsize=(18, 6))
+        self.im = plt.imshow(self.get_grid((1, 0)), aspect="auto")
+        plt.axis("off")
+        plt.show()
+        # time.sleep(0.05)
+
+    def get_grid(self, point):
+        plot_grid = numpy.zeros((self.max_y + 1, self.max_x + 1), dtype=int)
+
+        x, y = point[:2]
+        plot_grid[y][x] = 240  # elf
+
+        for x, y in self.grid.keys():
+            plot_grid[y][x] = 50  # walls
+        for x, y in self.b:
+            plot_grid[y][x] = 100  # tornados
+
+        return plot_grid
+
+    def animate(self):
+        for point in self.path:
+            self.move_blizzards()
+            grid = self.get_grid(point)
+            self.im.set_data(grid)
+            self.fig.canvas.draw_idle()
+            plt.pause(1)
+        time.sleep(5)
+
 
 def process_input(blob):
     lines = blob.split("\n")
@@ -111,11 +152,17 @@ def process_input(blob):
 
 
 def do_part_1(processed_input):
-    valley, _ = processed_input
-    edges = valley.edges_for_n_minutes(280)
+    valley, lines = processed_input
+    edges = valley.edges_for_n_minutes(N)
     cost, path = djikstra(edges, (1, 0, 0), valley.destination)
     # print(cost)
     # print(path)
+
+    # Visu
+    # valley_p = Valley(lines)
+    # valley_p.path = path
+    # valley_p.initialize_plot()
+    # valley_p.animate()
     return cost
 
 
@@ -128,26 +175,32 @@ def do_part_2(processed_input):
     # Go
     valley1.destination = valley1.p2
     edges = valley1.edges_for_n_minutes(N)
-    cost, path = djikstra(edges, valley1.p1 + (0,), valley1.destination)
+    cost, path1 = djikstra(edges, valley1.p1 + (0,), valley1.destination)
     # print(cost)
-    # print(path)
+    # print(path1)
     step1 = int(cost) + 1
 
     # Back
     valley2.destination = valley2.p1
     _ = valley2.edges_for_n_minutes(step1)
     edges = valley2.edges_for_n_minutes(N)
-    cost, path = djikstra(edges, valley2.p2 + (0,), valley2.destination)
+    cost, path2 = djikstra(edges, valley2.p2 + (0,), valley2.destination)
     # print(cost)
-    # print(path)
+    # print(path2)
     step2 = int(cost) + step1
 
     # Go
     valley3.destination = valley3.p2
     _ = valley3.edges_for_n_minutes(step2)
     edges = valley3.edges_for_n_minutes(N)
-    cost, path = djikstra(edges, valley3.p1 + (0,), valley3.destination)
+    cost, path3 = djikstra(edges, valley3.p1 + (0,), valley3.destination)
     # print(cost)
-    # print(path)
+    # print(path3)
+
+    # Visu
+    valley_p = Valley(lines)
+    valley_p.path = path1[1:] + path2 + path3[1:]
+    valley_p.initialize_plot()
+    valley_p.animate()
 
     return step2 + cost
