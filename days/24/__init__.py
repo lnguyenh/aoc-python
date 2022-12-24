@@ -20,8 +20,6 @@ class Valley:
 
         self.destination = self.p2
 
-        self.one_way = 0
-
         # Matplotlib stuff
         self.path = []
         self.done = False
