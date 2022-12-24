@@ -202,9 +202,9 @@ def do_part_2(processed_input):
     # print(path3)
 
     # Visu
-    valley_p = Valley(lines)
-    valley_p.path = path1[1:] + path2[1:] + path3[1:]
-    valley_p.initialize_plot()
-    valley_p.animate()
+    # valley_p = Valley(lines)
+    # valley_p.path = path1[1:] + path2[1:] + path3[1:]
+    # valley_p.initialize_plot()
+    # valley_p.animate()
 
     return step2 + cost
