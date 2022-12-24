@@ -11,7 +11,7 @@ class Valley:
     def __init__(self, lines):
         self.grid = {}
         self.blizzards = defaultdict(list)
-        self.b = set()  # blizzard posiitions
+        self.b = set()  # blizzard positions
         self.initialize(lines)
         self.min_x, self.max_x, self.min_y, self.max_y = self.get_maxes()
 
@@ -62,7 +62,6 @@ class Valley:
             new_edges = []
             # print(f"Minute {t}")
             # self.print()
-            toto = 1
             for y in range(self.min_y, self.max_y + 1):
                 for x in range(self.min_x, self.max_x + 1):
                     point = (x, y)
@@ -119,7 +118,6 @@ class Valley:
         self.im = plt.imshow(self.get_grid((1, 0)), aspect="auto", cmap="bone")
         plt.axis("off")
         plt.show()
-        # time.sleep(0.05)
 
     def get_grid(self, point):
         plot_grid = numpy.zeros((self.max_y + 1, self.max_x + 1), dtype=int)
@@ -164,10 +162,10 @@ def do_part_1(processed_input):
     # print(path)
 
     # Visu
-    valley_p = Valley(lines)
-    valley_p.path = path[1:]
-    valley_p.initialize_plot()
-    valley_p.animate()
+    # valley_p = Valley(lines)
+    # valley_p.path = path[1:]
+    # valley_p.initialize_plot()
+    # valley_p.animate()
     return cost
 
 
