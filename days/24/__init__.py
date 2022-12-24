@@ -2,16 +2,23 @@ from collections import defaultdict
 
 from utils.djikstra import djikstra
 
+N = 300
+
 
 class Valley:
     def __init__(self, lines):
-        self.start = (1, 0, 0)
         self.grid = {}
         self.blizzards = defaultdict(list)
         self.b = set()  # blizzard posiitions
         self.initialize(lines)
         self.min_x, self.max_x, self.min_y, self.max_y = self.get_maxes()
-        self.destination = ((self.max_x - 1), self.max_y)
+
+        self.p1 = (1, 0)
+        self.p2 = ((self.max_x - 1), self.max_y)
+
+        self.destination = self.p2
+
+        self.one_way = 0
 
     def initialize(self, lines):
         for j, line in enumerate(lines):
@@ -44,8 +51,8 @@ class Valley:
         edges = []
         for t in range(n):
             new_edges = []
-            print(f"Minute {t}")
-            self.print()
+            # print(f"Minute {t}")
+            # self.print()
             toto = 1
             for y in range(self.min_y, self.max_y + 1):
                 for x in range(self.min_x, self.max_x + 1):
@@ -99,17 +106,48 @@ class Valley:
 
 
 def process_input(blob):
-    return blob.split("\n")
+    lines = blob.split("\n")
+    return Valley(lines), lines
 
 
-def do_part_1(lines):
-    valley = Valley(lines)
-    edges = valley.edges_for_n_minutes(30)
-    cost, path = djikstra(edges, valley.start, valley.destination)
-    print(cost)
-    print(path)
+def do_part_1(processed_input):
+    valley, _ = processed_input
+    edges = valley.edges_for_n_minutes(280)
+    cost, path = djikstra(edges, (1, 0, 0), valley.destination)
+    # print(cost)
+    # print(path)
     return cost
 
 
 def do_part_2(processed_input):
-    return "toto"
+    _, lines = processed_input
+    valley1 = Valley(lines)
+    valley2 = Valley(lines)
+    valley3 = Valley(lines)
+
+    # Go
+    valley1.destination = valley1.p2
+    edges = valley1.edges_for_n_minutes(N)
+    cost, path = djikstra(edges, valley1.p1 + (0,), valley1.destination)
+    # print(cost)
+    # print(path)
+    step1 = int(cost) + 1
+
+    # Back
+    valley2.destination = valley2.p1
+    _ = valley2.edges_for_n_minutes(step1)
+    edges = valley2.edges_for_n_minutes(N)
+    cost, path = djikstra(edges, valley2.p2 + (0,), valley2.destination)
+    # print(cost)
+    # print(path)
+    step2 = int(cost) + step1
+
+    # Go
+    valley3.destination = valley3.p2
+    _ = valley3.edges_for_n_minutes(step2)
+    edges = valley3.edges_for_n_minutes(N)
+    cost, path = djikstra(edges, valley3.p1 + (0,), valley3.destination)
+    # print(cost)
+    # print(path)
+
+    return step2 + cost
