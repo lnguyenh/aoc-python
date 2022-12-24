@@ -70,6 +70,7 @@ for x in reversed(range(6)):
 - See day 14 for animation
 - https://github.com/tomsembl/AdventOfCode/blob/main/2022/14.3.py could be a source of inspiration too or https://www.reddit.com/r/adventofcode/comments/zlmwb4/2022_day_14_how_does_everyone_do_visualisations/
 - See day 24 for frame by frame animation
+- cmap colormaps https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
 ### Numpy for dummies
 ```

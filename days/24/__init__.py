@@ -116,7 +116,7 @@ class Valley:
     def initialize_plot(self):
         plt.ion()
         self.fig = plt.figure(figsize=(18, 9))
-        self.im = plt.imshow(self.get_grid((1, 0)), aspect="auto")
+        self.im = plt.imshow(self.get_grid((1, 0)), aspect="auto", cmap="bone")
         plt.axis("off")
         plt.show()
         # time.sleep(0.05)
@@ -144,7 +144,7 @@ class Valley:
             grid = self.get_grid(point)
             self.im.set_data(grid)
             self.fig.canvas.draw_idle()
-            plt.pause(1)
+            plt.pause(0.01)
         time.sleep(5)
 
 
@@ -164,10 +164,10 @@ def do_part_1(processed_input):
     # print(path)
 
     # Visu
-    # valley_p = Valley(lines)
-    # valley_p.path = path
-    # valley_p.initialize_plot()
-    # valley_p.animate()
+    valley_p = Valley(lines)
+    valley_p.path = path[1:]
+    valley_p.initialize_plot()
+    valley_p.animate()
     return cost
 
 
