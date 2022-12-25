@@ -1,10 +1,17 @@
+from collections import deque
 from utils.regexp import search_groups
 
 
 class IntCode:
-    def __init__(self, program):
+    def __init__(self, program, seed=None, silent=False, seed_only=False):
         self.p = program[:]
-        self.original_program = program
+        self.original_program = program[:]
+        self.seed = deque(seed) if seed else deque([])
+        self.silent = silent
+        self.last_output = None
+        self.seed_only = seed_only
+        self.i = 0
+        self.done = False
 
     def parse_instruction(self, i):
         text = str(self.p[i]).rjust(5, "0")
@@ -53,18 +60,29 @@ class IntCode:
         return i + 4
 
     def _input(self, i, modes):
-        print("Type input value:")
-        value = input()
+        if self.seed:
+            value = self.seed.popleft()
+            # print(f"Using seed input value: {value}")
+        elif self.seed_only:
+            self.pause(i)
+            return None
+        elif not self.seed_only:
+            print("Type input value:")
+            value = input()
         a = self.p[i + 1]
         self.p[a] = int(value)
         return i + 2
 
     def _output(self, i, modes):
         if modes[2]:
-            print(f"{self.p[1 + 1]}")
+            result = self.p[1 + 1]
         else:
             a = self.p[i + 1]
-            print(f"{self.p[a]}")
+            result = self.p[a]
+        if self.silent:
+            self.last_output = result
+        else:
+            print(f"Output is: {result}")
         return i + 2
 
     def _jump_if_true(self, i, modes):
@@ -94,33 +112,34 @@ class IntCode:
     def _finish(self, i, modes):
         return None
 
-    def run(self):
-        i = 0
+    def run(self, from_i=0):
+        i = from_i
         while True:
             i = self.run_one(i)
             if i is None:
+                if self.i is None:
+                    self.done = True
                 break
+
+    def pause(self, i):
+        self.i = i
+
+    def resume(self):
+        if not self.done:
+            i = self.i
+            self.i = None
+            self.run(i)
 
     def set(self, value, index):
         self.p[index] = value
 
+    def add_to_seed(self, value):
+        self.seed.append(value)
+
     def reset(self):
         self.p = self.original_program[:]
 
-
-def process_input(blob):
-    return [int(n) for n in blob.split(",")]
-
-
-def do_part_1(program):
-    intcode = IntCode(program)
-    intcode.run()
-    return "toto"
-
-
-def do_part_2(processed_input):
-    return "toto"
-
-
-def do_visualization(processed_input):
-    return None
+    def read(self):
+        last_output = self.last_output
+        self.last_output = None
+        return last_output

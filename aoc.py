@@ -10,7 +10,9 @@ INPUT_DIRECTORY = "/inputs/"
 
 
 def get_input_path(year, day, test, filename):
-    path = f"{year}{TEST_INPUT_DIRECTORY}" if test else f"{year}{INPUT_DIRECTORY}"
+    path = (
+        f"year{year}{TEST_INPUT_DIRECTORY}" if test else f"year{year}{INPUT_DIRECTORY}"
+    )
     filename = filename if filename else f"{day}.txt"
     return path + filename
 
@@ -33,7 +35,7 @@ def run(year, day, test, filename, visu):
     print(f"Running AOC day {day}{' IN TEST MODE' if test else ''} using {input_path}")
 
     # Import the module for the day
-    day_module = import_module(f"{year}.days.{day}")
+    day_module = import_module(f"year{year}.days.{day}")
 
     # Read the raw input
     with open(input_path, "r") as file:
