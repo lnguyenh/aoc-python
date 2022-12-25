@@ -15,11 +15,15 @@ class IntCode:
         mode_1, mode_2, mode_3, code = self.parse_instruction(i)
         modes = mode_1, mode_2, mode_3
         instructions = {
-            "01": self.add,
-            "02": self.multiply,
-            "03": self.input,
-            "04": self.output,
-            "99": self.finish,
+            "01": self._add,
+            "02": self._multiply,
+            "03": self._input,
+            "04": self._output,
+            "05": self._jump_if_true,
+            "06": self._jump_if_false,
+            "07": self._less_than,
+            "08": self._equals,
+            "99": self._finish,
         }
         return instructions[code](i, modes)
 
@@ -27,30 +31,35 @@ class IntCode:
         content = self.p[i]
         return content if mode else self.p[content]
 
-    def add(self, i, modes):
+    def get_two_params(self, i, modes):
         a = self.get_value((i + 1), modes[2])
         b = self.get_value((i + 2), modes[1])
-        total = a + b
+        return a, b
+
+    def get_three_params(self, i, modes):
+        a = self.get_value((i + 1), modes[2])
+        b = self.get_value((i + 2), modes[1])
         c = self.p[i + 3]
-        self.p[c] = total
+        return a, b, c
+
+    def _add(self, i, modes):
+        a, b, c = self.get_three_params(i, modes)
+        self.p[c] = a + b
         return i + 4
 
-    def multiply(self, i, modes):
-        a = self.get_value(i + 1, modes[2])
-        b = self.get_value(i + 2, modes[1])
-        total = a * b
-        c = self.p[i + 3]
-        self.p[c] = total
+    def _multiply(self, i, modes):
+        a, b, c = self.get_three_params(i, modes)
+        self.p[c] = a * b
         return i + 4
 
-    def input(self, i, modes):
+    def _input(self, i, modes):
         print("Type input value:")
         value = input()
         a = self.p[i + 1]
         self.p[a] = int(value)
         return i + 2
 
-    def output(self, i, modes):
+    def _output(self, i, modes):
         if modes[2]:
             print(f"{self.p[1 + 1]}")
         else:
@@ -58,7 +67,31 @@ class IntCode:
             print(f"{self.p[a]}")
         return i + 2
 
-    def finish(self, i, modes):
+    def _jump_if_true(self, i, modes):
+        a, b = self.get_two_params(i, modes)
+        if a != 0:
+            return b
+        else:
+            return i + 3
+
+    def _jump_if_false(self, i, modes):
+        a, b = self.get_two_params(i, modes)
+        if a == 0:
+            return b
+        else:
+            return i + 3
+
+    def _less_than(self, i, modes):
+        a, b, c = self.get_three_params(i, modes)
+        self.p[c] = 1 if a < b else 0
+        return i + 4
+
+    def _equals(self, i, modes):
+        a, b, c = self.get_three_params(i, modes)
+        self.p[c] = 1 if a == b else 0
+        return i + 4
+
+    def _finish(self, i, modes):
         return None
 
     def run(self):
