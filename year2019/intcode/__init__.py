@@ -5,7 +5,7 @@ from utils.regexp import search_groups
 class IntCode:
     def __init__(self, program, seed=None, silent=False, seed_only=False):
         # Program
-        self.p = program[:] + [0] * 1000
+        self.p = program[:] + [0] * 10000
         self.original_program = program[:]
 
         # Config
@@ -144,8 +144,10 @@ class IntCode:
 
     def run(self, from_i=0):
         i = from_i
+        num_runs = 0
         while True:
             i = self.run_one(i)
+            num_runs += 1
             if i is None:
                 if self.i is None:
                     self.done = True
