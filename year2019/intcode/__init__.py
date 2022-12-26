@@ -136,7 +136,7 @@ class IntCode:
 
     def _change_relative_base(self, i, modes):
         a = self.get_one_param(i, modes)
-        self.base = a
+        self.base += a
         return i + 2
 
     def _finish(self, i, modes):
