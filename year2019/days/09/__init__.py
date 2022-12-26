@@ -1,8 +1,13 @@
+from year2019.intcode import IntCode
+
+
 def process_input(blob):
-    return blob.split("\n")
+    return [int(n) for n in blob.split(",")]
 
 
-def do_part_1(processed_input):
+def do_part_1(program):
+    intcode = IntCode(program)
+    intcode.run()
     return "toto"
 
 

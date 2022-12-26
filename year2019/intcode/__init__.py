@@ -4,14 +4,22 @@ from utils.regexp import search_groups
 
 class IntCode:
     def __init__(self, program, seed=None, silent=False, seed_only=False):
-        self.p = program[:]
+        # Program
+        self.p = program[:] + [0] * 1000
         self.original_program = program[:]
-        self.seed = deque(seed) if seed else deque([])
-        self.silent = silent
-        self.last_output = None
+
+        # Config
         self.seed_only = seed_only
-        self.i = 0
+        self.silent = silent
+
+        # Control
+        self.i = 0  # saved position of the program when paused
+        self.base = 0  # relative base for relative mode
+        self.seed = deque(seed) if seed else deque([])  # used to send input
+
+        # Output
         self.done = False
+        self.last_output = None
 
     def parse_instruction(self, i):
         text = str(self.p[i]).rjust(5, "0")
@@ -30,13 +38,32 @@ class IntCode:
             "06": self._jump_if_false,
             "07": self._less_than,
             "08": self._equals,
+            "09": self._change_relative_base,
             "99": self._finish,
         }
         return instructions[code](i, modes)
 
     def get_value(self, i, mode):
         content = self.p[i]
-        return content if mode else self.p[content]
+        if mode == 0:
+            return self.p[content]
+        elif mode == 1:
+            return content
+        elif mode == 2:
+            return self.p[content + self.base]
+        else:
+            raise Exception("Unknown mode")
+
+    def set_value(self, address, value, mode):
+        if mode == 2:
+            address += self.base
+        if address >= len(self.p):
+            self.p += [0] * (address - len(self.p) + 1)
+        self.p[address] = value
+
+    def get_one_param(self, i, modes):
+        a = self.get_value((i + 1), modes[2])
+        return a
 
     def get_two_params(self, i, modes):
         a = self.get_value((i + 1), modes[2])
@@ -51,12 +78,12 @@ class IntCode:
 
     def _add(self, i, modes):
         a, b, c = self.get_three_params(i, modes)
-        self.p[c] = a + b
+        self.set_value(c, a + b, modes[0])
         return i + 4
 
     def _multiply(self, i, modes):
         a, b, c = self.get_three_params(i, modes)
-        self.p[c] = a * b
+        self.set_value(c, a * b, modes[0])
         return i + 4
 
     def _input(self, i, modes):
@@ -70,16 +97,14 @@ class IntCode:
             print("Type input value:")
             value = input()
         a = self.p[i + 1]
-        self.p[a] = int(value)
+        self.set_value(a, int(value), modes[2])
         return i + 2
 
     def _output(self, i, modes):
-        if modes[2]:
-            result = self.p[1 + 1]
-        else:
-            a = self.p[i + 1]
-            result = self.p[a]
+        result = self.get_one_param(i, modes)
+
         if self.silent:
+            # just save the value
             self.last_output = result
         else:
             print(f"Output is: {result}")
@@ -101,13 +126,18 @@ class IntCode:
 
     def _less_than(self, i, modes):
         a, b, c = self.get_three_params(i, modes)
-        self.p[c] = 1 if a < b else 0
+        self.set_value(c, 1 if a < b else 0, modes[0])
         return i + 4
 
     def _equals(self, i, modes):
         a, b, c = self.get_three_params(i, modes)
-        self.p[c] = 1 if a == b else 0
+        self.set_value(c, 1 if a == b else 0, modes[0])
         return i + 4
+
+    def _change_relative_base(self, i, modes):
+        a = self.get_one_param(i, modes)
+        self.base = a
+        return i + 2
 
     def _finish(self, i, modes):
         return None
@@ -143,3 +173,10 @@ class IntCode:
         last_output = self.last_output
         self.last_output = None
         return last_output
+
+
+if __name__ == "__main__":
+    program = [1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]
+    intcode = IntCode(program)
+    intcode.run()
+    toto = 1
