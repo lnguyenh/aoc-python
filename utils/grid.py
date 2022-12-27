@@ -1,12 +1,29 @@
+import matplotlib.pyplot as plt
+import numpy
+
+
 class Grid:
 
     TRANSLATE = {}  # characters to save in the grid as some other value
     SKIP = tuple()  # tuple with characters to not save in the grid
     PRINT = {}  # special translations when printing (see 2019 day 11 for example)
 
+    PLOT_BOX = (300, 200)  # visualization box (Y, X)
+    PLOT = {}  # special translations when animating (see 2019 day 11 for example)
+    X_OFFSET = 0
+    Y_OFFSET = 0
+    CMAP = None  # "bones", ...
+    FIGSIZE = None  # ex: (18, 9) used to change size/ratio
+
     def __init__(self, lines, *args, **kwargs):
         self.grid = {}
         self.populate_grid(lines)
+
+        # Matplotlib stuff
+        self.path = []
+        self.done = False
+        self.fig = None
+        self.im = None
 
     @property
     def points(self):
@@ -37,3 +54,32 @@ class Grid:
                 line += c
             print(line)
         print("\n")
+
+    def get_plot_grid(self):
+        plot_grid = numpy.zeros(self.PLOT_BOX, dtype=int)
+
+        for key, c in self.grid.items():
+            x, y = key
+            plot_grid[y + self.Y_OFFSET][x + self.X_OFFSET] = self.PLOT.get(c, c)
+
+        self.add_to_plot(plot_grid)
+
+        return plot_grid
+
+    def add_to_plot(self, plot_grid):
+        # override to add special stuff to the grid
+        return None
+
+    def initialize_plot(self):
+        plt.ion()
+        self.fig = plt.figure(figsize=self.FIGSIZE)
+        self.im = plt.imshow(
+            self.get_plot_grid(), aspect="auto", cmap=self.CMAP, vmin=0, vmax=500
+        )
+        plt.axis("off")
+        plt.show()
+
+    def refresh_plot(self):
+        self.im.set_data(self.get_plot_grid())
+        self.fig.canvas.draw_idle()
+        plt.pause(0.01)

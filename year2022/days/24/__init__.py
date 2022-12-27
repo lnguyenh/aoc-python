@@ -25,7 +25,6 @@ class Valley:
         self.done = False
         self.fig = None
         self.im = None
-        self.ani = None
 
     def initialize(self, lines):
         for j, line in enumerate(lines):

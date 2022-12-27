@@ -1,3 +1,5 @@
+import time
+
 from utils.grid import Grid
 from year2019.intcode import IntCode
 
@@ -8,6 +10,14 @@ class Hull(Grid):
         "w": "*",
         "b": " ",
     }
+    PLOT_BOX = (30, 65)  # visualization box
+    PLOT = {
+        "w": 280,
+        "b": 55,
+    }
+    X_OFFSET = 10
+    Y_OFFSET = 10
+    FIGSIZE = (12, 5)
 
     def __init__(self, lines):
         super().__init__(lines)
@@ -36,6 +46,10 @@ class Hull(Grid):
 
     def count_painted(self):
         return len(self.grid.keys())
+
+    def add_to_plot(self, plot_grid):
+        x, y = self.position
+        plot_grid[y + self.Y_OFFSET][x + self.Y_OFFSET] = 450
 
 
 def process_input(blob):
@@ -84,5 +98,26 @@ def do_part_2(program):
     return "toto"
 
 
-def do_visualization(processed_input):
+def do_visualization(program):
+    hull = Hull([])
+    hull.initialize_plot()
+    intcode = IntCode(program, seed=[1], silent=True, seed_only=True)
+
+    while intcode.is_not_done:
+        intcode.resume()
+        (color, turn) = intcode.read_all()
+        if color == 0:
+            hull.paint_black()
+        else:
+            hull.paint_white()
+        if turn == 0:
+            hull.turn_left()
+        else:
+            hull.turn_right()
+        hull.move_forward()
+        intcode.add_to_seed(hull.get_color())
+
+        hull.refresh_plot()
+    time.sleep(5)
+
     return None
