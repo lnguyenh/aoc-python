@@ -83,3 +83,9 @@ class Grid:
         self.im.set_data(self.get_plot_grid())
         self.fig.canvas.draw_idle()
         plt.pause(0.01)
+
+    def print_box_size(self):
+        # Can be used to help finding good setting for visualization
+        x_min, x_max, y_min, y_max = self.get_min_maxes()
+        print(f"y_min: {y_min}, y_max: {y_max}, total_y = {y_max - y_min}")
+        print(f"x_min: {x_min}, x_max: {x_max}, total_x = {x_max - x_min}")

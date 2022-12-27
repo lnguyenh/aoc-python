@@ -10,13 +10,13 @@ class Hull(Grid):
         "w": "*",
         "b": " ",
     }
-    PLOT_BOX = (30, 65)  # visualization box
+    PLOT_BOX = (16, 53)  # visualization box
     PLOT = {
         "w": 280,
         "b": 55,
     }
-    X_OFFSET = 10
-    Y_OFFSET = 10
+    X_OFFSET = 5
+    Y_OFFSET = 5
     FIGSIZE = (12, 5)
 
     def __init__(self, lines):
