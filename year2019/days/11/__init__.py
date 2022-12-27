@@ -4,6 +4,10 @@ from year2019.intcode import IntCode
 
 class Hull(Grid):
     SKIP = (".",)
+    PRINT = {
+        "w": "*",
+        "b": " ",
+    }
 
     def __init__(self, lines):
         super().__init__(lines)
@@ -58,7 +62,25 @@ def do_part_1(program):
     return hull.count_painted()
 
 
-def do_part_2(processed_input):
+def do_part_2(program):
+    hull = Hull([])
+    intcode = IntCode(program, seed=[1], silent=True, seed_only=True)
+    while intcode.is_not_done:
+        intcode.resume()
+        (color, turn) = intcode.read_all()
+        if color == 0:
+            hull.paint_black()
+        else:
+            hull.paint_white()
+        if turn == 0:
+            hull.turn_left()
+        else:
+            hull.turn_right()
+        hull.move_forward()
+        intcode.add_to_seed(hull.get_color())
+
+    hull.print()
+
     return "toto"
 
 

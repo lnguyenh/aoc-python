@@ -2,6 +2,7 @@ class Grid:
 
     TRANSLATE = {}  # characters to save in the grid as some other value
     SKIP = tuple()  # tuple with characters to not save in the grid
+    PRINT = {}  # special translations when printing (see 2019 day 11 for example)
 
     def __init__(self, lines, *args, **kwargs):
         self.grid = {}
@@ -31,6 +32,8 @@ class Grid:
         for j in range(y_min, y_max + 1):
             line = ""
             for i in range(x_min, x_max + 1):
-                line += self.grid[(i, j)]
+                c = self.grid.get((i, j), " ")
+                c = self.PRINT.get(c, c)
+                line += c
             print(line)
         print("\n")
