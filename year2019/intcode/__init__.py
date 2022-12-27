@@ -19,7 +19,7 @@ class IntCode:
 
         # Output
         self.done = False
-        self.last_output = None
+        self.out = deque([])
 
     def parse_instruction(self, i):
         text = str(self.p[i]).rjust(5, "0")
@@ -105,7 +105,7 @@ class IntCode:
 
         if self.silent:
             # just save the value
-            self.last_output = result
+            self.out.append(result)
         else:
             print(f"Output is: {result}")
         return i + 2
@@ -172,9 +172,17 @@ class IntCode:
         self.p = self.original_program[:]
 
     def read(self):
-        last_output = self.last_output
-        self.last_output = None
-        return last_output
+        return self.out.popleft()
+
+    def read_all(self):
+        results = []
+        while self.out:
+            results.append(self.out.popleft())
+        return results
+
+    @property
+    def is_not_done(self):
+        return not self.done
 
 
 if __name__ == "__main__":
