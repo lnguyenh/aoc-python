@@ -54,7 +54,6 @@ class Galaxy:
                 m2.vz += 1
         for m in self.moons:
             m.apply_velocity()
-        toto = 1
 
     def do_n_steps(self, n):
         for _ in range(n):
