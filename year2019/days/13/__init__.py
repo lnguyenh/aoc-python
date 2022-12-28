@@ -62,6 +62,10 @@ class Game(Grid):
         for text in self.ax.texts:
             text.remove()
         self.ax.text(1, 1, f"{self.score}", fontsize=15, color="yellow")
+        x, y = self.ball[0]
+        plot_grid[y][x] = 400
+        x, y = self.paddle
+        plot_grid[y][x] = 300
         return None
 
 

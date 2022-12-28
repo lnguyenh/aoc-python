@@ -64,3 +64,4 @@ if __name__ == "__main__":
             r"(?P<mode1>\d)?(?P<mode2>\d)(?P<mode3>\d)(?P<opcode>\d\d)", "1002"
         )
     )
+    print(search_groups(r"^([0-9]+)\*([\w]+)=(.*)$", "1*NHQH=3*NDMT"))
