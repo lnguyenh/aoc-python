@@ -132,4 +132,4 @@ solve("x*4-2")
 
   
 ### Ideas when stuck :)
-- Binary search. Conditions: results can be sorted, and integers. See 2019 day 14 part 2
+- Binary search. Conditions: results can be sorted, and integers, and we have an easy "test function". See 2019 day 14 part 2
