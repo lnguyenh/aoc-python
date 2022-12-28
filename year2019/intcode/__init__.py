@@ -3,7 +3,14 @@ from utils.regexp import search_groups
 
 
 class IntCode:
-    def __init__(self, program, seed=None, silent=False, seed_only=False):
+    def __init__(
+        self,
+        program,
+        seed=None,
+        silent=False,
+        seed_only=False,
+        pause_after_output=False,
+    ):
         # Program
         self.p = program[:] + [0] * 10000
         self.original_program = program[:]
@@ -11,11 +18,13 @@ class IntCode:
         # Config
         self.seed_only = seed_only
         self.silent = silent
+        self.pause_after_output = pause_after_output
 
         # Control
         self.i = 0  # saved position of the program when paused
         self.base = 0  # relative base for relative mode
         self.seed = deque(seed) if seed else deque([])  # used to send input
+        self.waiting_input = False
 
         # Output
         self.done = False
@@ -89,9 +98,11 @@ class IntCode:
     def _input(self, i, modes):
         if self.seed:
             value = self.seed.popleft()
+            self.waiting_input = False
             # print(f"Using seed input value: {value}")
         elif self.seed_only:
             self.pause(i)
+            self.waiting_input = True
             return None
         elif not self.seed_only:
             print("Type input value:")
@@ -108,6 +119,11 @@ class IntCode:
             self.out.append(result)
         else:
             print(f"Output is: {result}")
+
+        if self.pause_after_output:
+            self.pause(i + 2)
+            return None
+
         return i + 2
 
     def _jump_if_true(self, i, modes):

@@ -24,6 +24,7 @@ class Grid:
         self.done = False
         self.fig = None
         self.im = None
+        self.ax = None
 
     @property
     def points(self):
@@ -62,17 +63,17 @@ class Grid:
             x, y = key
             plot_grid[y + self.Y_OFFSET][x + self.X_OFFSET] = self.PLOT.get(c, c)
 
-        self.add_to_plot(plot_grid)
-
         return plot_grid
 
     def add_to_plot(self, plot_grid):
-        # override to add special stuff to the grid
+        # - Override to add special stuff to the grid
+        # - Example of text overlay in 2019 day 13
         return None
 
     def initialize_plot(self):
         plt.ion()
         self.fig = plt.figure(figsize=self.FIGSIZE)
+        self.ax = self.fig.add_subplot()
         self.im = plt.imshow(
             self.get_plot_grid(), aspect="auto", cmap=self.CMAP, vmin=0, vmax=500
         )
@@ -80,7 +81,9 @@ class Grid:
         plt.show()
 
     def refresh_plot(self):
-        self.im.set_data(self.get_plot_grid())
+        grid = self.get_plot_grid()
+        self.add_to_plot(grid)
+        self.im.set_data(grid)
         self.fig.canvas.draw_idle()
         plt.pause(0.01)
 
