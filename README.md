@@ -131,3 +131,5 @@ solve("x*4-2")
 - "parse" python library as a layer above regexp https://github.com/r1chardj0n3s/parse 
 
   
+### Ideas when stuck :)
+- Binary search. Conditions: results can be sorted, and integers. See 2019 day 14 part 2

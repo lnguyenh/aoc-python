@@ -1,4 +1,5 @@
-from collections import defaultdict, deque
+from collections import defaultdict
+from functools import partial
 
 from math import ceil
 
@@ -20,44 +21,59 @@ def process_input(blob):
     blob = blob.replace(" => ", "=")
     blob = blob.replace(", ", "+")
     blob = blob.replace(" ", "*")
-    return blob.split("\n")
+    reactions = {}
+    for command in blob.split("\n"):
+        a, b, c = search_groups(r"^(.*)=([0-9]+)\*([\w]+)$", command)
+        reactions[c] = Reaction(c, int(b), a)
+    reactions["ORE"] = Reaction("ORE", 1, "")
+    return reactions
 
 
-def requires(element, reactions, needed, produced):
+def requires(element, reactions, needed, produced, n=1):
     if element == "ORE":
         return
 
     num_ores = 0
     for component, num in reactions[element].ingredients.items():
         have = produced[component] - needed[component]
+        num_for_n = num * n
 
-        if num > have:
-            num_reactions = int(ceil((num - have) / reactions[component].num))
+        if num_for_n > have:
+            num_reactions = int(ceil((num_for_n - have) / reactions[component].num))
 
-            needed[component] += num
+            needed[component] += num_for_n
             produced[component] += num_reactions * reactions[component].num
-            for _ in range(num_reactions):
-                requires(component, reactions, needed, produced)
+            requires(component, reactions, needed, produced, num_reactions)
         else:
-            needed[component] += num
+            needed[component] += num_for_n
     return num_ores
 
 
-def do_part_1(commands):
-    reactions = {}
-    for command in commands:
-        a, b, c = search_groups(r"^(.*)=([0-9]+)\*([\w]+)$", command)
-        reactions[c] = Reaction(c, int(b), a)
-    reactions["ORE"] = Reaction("ORE", 1, "")
+def do_part_1(reactions):
     needed = defaultdict(int)
     produced = defaultdict(int)
     requires("FUEL", reactions, needed, produced)
-
     return produced["ORE"]
 
 
-def do_part_2(processed_input):
-    return "toto"
+def binary_search(low, high, function):
+    while high - low > 1:
+        val = low + (high - low) // 2
+        if function(val) > 1000000000000:
+            high = val
+        else:
+            low = val
+    return low
+
+
+def do_part_2(reactions):
+    def binary_search_function(n):
+        needed = defaultdict(int)
+        produced = defaultdict(int)
+        requires("FUEL", reactions, needed, produced, n)
+        return produced["ORE"]
+
+    return binary_search(1, 10000000, binary_search_function)
 
 
 def do_visualization(processed_input):
