@@ -1,4 +1,5 @@
 from itertools import combinations
+from math import lcm
 
 from utils.strings import remove_from_string
 
@@ -11,6 +12,9 @@ class Moon:
         self.vx = 0
         self.vy = 0
         self.vz = 0
+        self.x0 = x
+        self.y0 = y
+        self.z0 = z
 
     def apply_velocity(self):
         self.x += self.vx
@@ -62,6 +66,31 @@ class Galaxy:
     def get_part_1(self):
         return sum([m.energy for m in self.moons])
 
+    def get_part_2(self):
+        a = None
+        b = None
+        c = None
+        i = 0
+        while True:
+            self.do_step()
+            i = i + 1
+            if all([m.vx == 0 for m in self.moons]):
+                if all([m.x == m.x0 for m in self.moons]):
+                    if a is None:
+                        a = i
+            if all([m.vy == 0 for m in self.moons]):
+                if all([m.y == m.y0 for m in self.moons]):
+                    if b is None:
+                        b = i
+            if all([m.vz == 0 for m in self.moons]):
+                if all([m.z == m.z0 for m in self.moons]):
+                    if c is None:
+                        c = i
+            if a is not None and b is not None and c is not None:
+                break
+
+        return lcm(a, b, c)
+
 
 def process_input(blob):
     cleaned = remove_from_string(blob, ["<x=", " ", "z=", ">", "y="])
@@ -74,8 +103,9 @@ def do_part_1(lines):
     return galaxy.get_part_1()
 
 
-def do_part_2(processed_input):
-    return "toto"
+def do_part_2(lines):
+    galaxy = Galaxy(lines)
+    return galaxy.get_part_2()
 
 
 def do_visualization(processed_input):

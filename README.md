@@ -71,6 +71,7 @@ for x in reversed(range(6)):
 - https://github.com/tomsembl/AdventOfCode/blob/main/2022/14.3.py could be a source of inspiration too or https://www.reddit.com/r/adventofcode/comments/zlmwb4/2022_day_14_how_does_everyone_do_visualisations/
 - See day 24 for frame by frame animation
 - cmap colormaps https://matplotlib.org/stable/tutorials/colors/colormaps.html
+- maybe useful in the future. 3d visualization https://aoc.just2good.co.uk/2022/18 https://www.reddit.com/r/adventofcode/comments/zwkl1f/2022_day_18python_simple_visualisation_of_the/
 
 ### Numpy for dummies
 ```
