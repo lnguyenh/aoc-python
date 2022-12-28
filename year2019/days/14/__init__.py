@@ -43,23 +43,6 @@ def requires(element, reactions, needed, produced):
     return num_ores
 
 
-def dynamic_bfs(start, destination, state, get_neighbours):
-    paths = deque([[start]])
-    while paths:
-        path = paths.pop()
-        node = path[-1]
-
-        for neighbour in get_neighbours(state):
-            new_path = list(path)
-            new_path.append(neighbour)
-
-            if neighbour == destination:
-                return len(new_path), new_path
-
-            paths.append(new_path)
-            visited[node] = True
-
-
 def do_part_1(commands):
     reactions = {}
     for command in commands:
