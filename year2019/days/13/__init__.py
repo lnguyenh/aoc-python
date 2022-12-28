@@ -13,7 +13,7 @@ class Game(Grid):
         "3": 300,
         "4": 400,
     }
-    PLOT_BOX = (25, 42)
+    PLOT_BOX = (24, 42)
 
     def __init__(self, lines):
         super().__init__(lines)
@@ -130,8 +130,6 @@ def do_visualization(program):
     start_plotting = False
     game.initialize_plot()
     while intcode.is_not_done:
-        if start_plotting:
-            game.refresh_plot()
         if intcode.waiting_input:
             # provide info/input to intcode
             intcode.add_to_seed(game.get_play())
@@ -147,9 +145,9 @@ def do_visualization(program):
                     game.set_score(code)
                 else:
                     tile_id = code
-                    if tile_id == 3:
-                        start_plotting = True
                     game.add_block(x, y, tile_id)
+                if (x, y) == (41, 23):
+                    start_plotting = True
             i = (i + 1) % 3
         intcode.resume()
         if start_plotting:
