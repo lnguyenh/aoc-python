@@ -10,7 +10,7 @@ https://adventofcode.com/2022
 python3 -m venv venv
 . ./venv/bin/activate
 pip install -r requirements.txt
-python aoc.py --day "01"
+python aoc.py --day 01 --year 2022 
 ```
 
 ## Convenience tools
