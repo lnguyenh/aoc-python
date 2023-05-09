@@ -211,6 +211,7 @@ class Tetris:
             block = self.create_new_shape()
 
             # self.print(block)
+            toto = 1
             while True:
                 block = self.do_horizontal(block)
                 if self.block_touches_ground(block):
@@ -238,9 +239,11 @@ class Tetris:
                     if state in self.states:
                         remaining_blocks = self.skip(state, step, end_block_number)
                         return self.run(remaining_blocks)
-                    else:
-                        self.states[state] = step
+
+                    # save state as seen this step and proceed to next block
+                    self.states[state] = step
                     break
+
                 block = self.move_down(block)
 
     def do_horizontal(self, block):
