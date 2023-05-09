@@ -207,30 +207,24 @@ class Tetris:
         return max([y for _, y in self.profile])
 
     def run(self, end_block_number):
-        for i in range(end_block_number):
+        for _ in range(end_block_number):
             block = self.create_new_shape()
 
             # self.print(block)
             while True:
                 block = self.do_horizontal(block)
-                # self.print(block)
                 if self.block_touches_ground(block):
                     # self.print(block)
                     self.save_new_profile(block)
                     break
                 block = self.move_down(block)
-                # self.print(block)
 
     def run_with_loop_finding(self, end_block_number):
-        block_number = 0
-        while True:
-            block_number += 1
+        for block_number in range(1, end_block_number + 1):
             block = self.create_new_shape()
 
-            # self.print(block)
             while True:
                 block = self.do_horizontal(block)
-                # self.print(block)
                 if self.block_touches_ground(block):
                     self.save_new_profile(block)
 
@@ -248,7 +242,6 @@ class Tetris:
                         self.states[state] = step
                     break
                 block = self.move_down(block)
-                # self.print(block)
 
     def do_horizontal(self, block):
         instruction = self.instructions[self.current_instruction]
