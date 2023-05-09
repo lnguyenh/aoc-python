@@ -22,15 +22,18 @@ python aoc.py
 # run today's solution against the test input
 python aoc.py --test 
 
+# run a specific day for a specific year
+python aoc.py --day 17 --year 2022
+
 # run day 01 against the test input
-python aoc.py --day "01" --test  
+python aoc.py --day 01 --test  
 
 # run day 05 against the file toto.txt contained in the test input folder
-python aoc.py --day "05" --test --filename toto.txt 
+python aoc.py --day 05 --test --filename toto.txt 
 ```
-### Create the base files for a new day
+### Create the base files for a new day and a specific year
 ```
-make prepare day=03
+make prepare day=03 year=2023
 ```
 
 
