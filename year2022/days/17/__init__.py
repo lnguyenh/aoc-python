@@ -17,12 +17,7 @@ class Tetris:
         self.current_shape = 0
 
         self.height = 0
-        self.profile = set()
-        self.initialize()
 
-        self.states = {}
-
-    def initialize(self):
         self.profile = {
             (1, 0),
             (2, 0),
@@ -32,16 +27,20 @@ class Tetris:
             (6, 0),
             (7, 0),
         }
-        self.height = 0
 
-    def freeze(self, block):
+        self.states = {}
+
+    def save_new_profile(self, block):
         old_height = max([y for x, y in self.profile if x == 1])
 
+        # Add block to profile
         for p, value in block.items():
             self.profile.add((p.x, p.y))
 
+        # Save new height
         new_height = max([y for x, y in self.profile if x == 1])
 
+        # Generate new profile
         new_profile = set()
         x = 1
         y = new_height + 1
@@ -123,29 +122,22 @@ class Tetris:
         new_profile = set([(x, y - delta_height) for x, y in new_profile])
         self.profile = new_profile
 
-    def check_state(self, num_block, end_block_number):
-        state = State(tuple(self.profile), self.current_instruction, self.current_shape)
-        current_step = Step(num_block, self.height)
+    def skip(self, state, current_step, end_block_number):
+        old_step = self.states[state]
+        print(f"found {state}: {old_step}")
 
-        if state in self.states:
-            old_step = self.states[state]
-            print(f"found {state}: {old_step}")
-
-            # Fastforward to last bit after all the repetitions
-            times = int(
-                floor(
-                    (end_block_number - old_step.block_number)
-                    / (current_step.block_number - old_step.block_number)
-                )
+        # Fastforward to last bit after all the repetitions
+        times = int(
+            floor(
+                (end_block_number - old_step.block_number)
+                / (current_step.block_number - old_step.block_number)
             )
-            self.height = old_step.height + times * (self.height - old_step.height)
-            num_blocks_remaining = (end_block_number - old_step.block_number) % (
-                current_step.block_number - old_step.block_number
-            )
-            return num_blocks_remaining
-
-        self.states[state] = current_step
-        return None
+        )
+        self.height = old_step.height + times * (self.height - old_step.height)
+        num_blocks_remaining = (end_block_number - old_step.block_number) % (
+            current_step.block_number - old_step.block_number
+        )
+        return num_blocks_remaining
 
     def create_new_shape(self):
         shape = self.shapes[self.current_shape]
@@ -223,16 +215,16 @@ class Tetris:
                 block = self.do_horizontal(block)
                 # self.print(block)
                 if self.block_touches_ground(block):
-                    self.freeze(block)
                     # self.print(block)
+                    self.save_new_profile(block)
                     break
                 block = self.move_down(block)
                 # self.print(block)
 
-    def find_loop(self, end_block_number):
-        i = 0
+    def run_with_loop_finding(self, end_block_number):
+        block_number = 0
         while True:
-            i += 1
+            block_number += 1
             block = self.create_new_shape()
 
             # self.print(block)
@@ -240,10 +232,20 @@ class Tetris:
                 block = self.do_horizontal(block)
                 # self.print(block)
                 if self.block_touches_ground(block):
-                    self.freeze(block)
-                    remaining_blocks = self.check_state(i, end_block_number)
-                    if remaining_blocks is not None:
+                    self.save_new_profile(block)
+
+                    state = State(
+                        tuple(self.profile),
+                        self.current_instruction,
+                        self.current_shape,
+                    )
+                    step = Step(block_number, self.height)
+
+                    if state in self.states:
+                        remaining_blocks = self.skip(state, step, end_block_number)
                         return self.run(remaining_blocks)
+                    else:
+                        self.states[state] = step
                     break
                 block = self.move_down(block)
                 # self.print(block)
@@ -275,9 +277,8 @@ class Tetris:
         for y in range(max_y, min_y - 1, -1):
             line = ""
             for x in range(1, 8):
-                p = (x, y) in self.profile
                 b = block.get(Point(x, y))
-                if p:
+                if (x, y) in self.profile:
                     line += "#"
                 elif b:
                     line += b
@@ -299,5 +300,5 @@ def do_part_1(jets):
 
 def do_part_2(jets):
     tetris = Tetris(jets)
-    tetris.find_loop(end_block_number=1000000000000)
+    tetris.run_with_loop_finding(end_block_number=1000000000000)
     return tetris.highest_y + tetris.height
