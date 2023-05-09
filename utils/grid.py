@@ -1,11 +1,10 @@
+from collections import namedtuple
+
 import matplotlib.pyplot as plt
 import numpy
 
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+Point = namedtuple("Point", "x y")
 
 
 class Grid:

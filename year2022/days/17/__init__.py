@@ -1,14 +1,17 @@
-from collections import defaultdict
+from collections import namedtuple
 from math import floor
 
 from utils.grid import Point
+
+
+State = namedtuple("State", "profile instruction_index shape_index")
+Step = namedtuple("Step", "block_number height")
 
 
 class Tetris:
     def __init__(self, instruction):
         self.instructions = instruction
         self.current_instruction = 0
-        self.last_instruction = ""
 
         self.shapes = ["-", "+", "l", "i", "o"]
         self.current_shape = 0
@@ -17,7 +20,7 @@ class Tetris:
         self.profile = set()
         self.initialize()
 
-        self.states = defaultdict(list)
+        self.states = {}
 
     def initialize(self):
         self.profile = {
@@ -120,24 +123,28 @@ class Tetris:
         new_profile = set([(x, y - delta_height) for x, y in new_profile])
         self.profile = new_profile
 
-    def check_state(self, num_block, target):
-        state = tuple(self.profile), self.current_instruction, self.current_shape
+    def check_state(self, num_block, end_block_number):
+        state = State(tuple(self.profile), self.current_instruction, self.current_shape)
+        current_step = Step(num_block, self.height)
+
         if state in self.states:
-            self.states[state].append((num_block, self.height))
-            print(f"found {state}: {self.states[state]}")
+            old_step = self.states[state]
+            print(f"found {state}: {old_step}")
+
+            # Fastforward to last bit after all the repetitions
             times = int(
                 floor(
-                    (target - self.states[state][0][0])
-                    / (num_block - self.states[state][0][0])
+                    (end_block_number - old_step.block_number)
+                    / (current_step.block_number - old_step.block_number)
                 )
             )
-            self.height = self.states[state][0][1] + times * (
-                self.height - self.states[state][0][1]
+            self.height = old_step.height + times * (self.height - old_step.height)
+            num_blocks_remaining = (end_block_number - old_step.block_number) % (
+                current_step.block_number - old_step.block_number
             )
-            return (target - self.states[state][0][0]) % (
-                num_block - self.states[state][0][0]
-            )
-        self.states[state].append((num_block, self.height))
+            return num_blocks_remaining
+
+        self.states[state] = current_step
         return None
 
     def create_new_shape(self):
@@ -207,8 +214,8 @@ class Tetris:
     def highest_y(self):
         return max([y for _, y in self.profile])
 
-    def run(self, num_block):
-        for i in range(num_block):
+    def run(self, end_block_number):
+        for i in range(end_block_number):
             block = self.create_new_shape()
 
             # self.print(block)
@@ -222,7 +229,7 @@ class Tetris:
                 block = self.move_down(block)
                 # self.print(block)
 
-    def find_loop(self, num_blocks):
+    def find_loop(self, end_block_number):
         i = 0
         while True:
             i += 1
@@ -234,7 +241,7 @@ class Tetris:
                 # self.print(block)
                 if self.block_touches_ground(block):
                     self.freeze(block)
-                    remaining_blocks = self.check_state(i, num_blocks)
+                    remaining_blocks = self.check_state(i, end_block_number)
                     if remaining_blocks is not None:
                         return self.run(remaining_blocks)
                     break
@@ -243,7 +250,6 @@ class Tetris:
 
     def do_horizontal(self, block):
         instruction = self.instructions[self.current_instruction]
-        self.last_instruction = instruction, self.current_instruction
         if instruction == ">":
             if not self.block_touches_right(block):
                 block = self.move_right(block)
@@ -287,11 +293,11 @@ def process_input(blob):
 
 def do_part_1(jets):
     tetris = Tetris(jets)
-    tetris.run(2022)
+    tetris.run(end_block_number=2022)
     return tetris.highest_y + tetris.height
 
 
 def do_part_2(jets):
     tetris = Tetris(jets)
-    tetris.find_loop(1000000000000)
+    tetris.find_loop(end_block_number=1000000000000)
     return tetris.highest_y + tetris.height
