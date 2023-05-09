@@ -122,7 +122,7 @@ class Tetris:
         new_profile = set([(x, y - delta_height) for x, y in new_profile])
         self.profile = new_profile
 
-    def skip(self, state, current_step, end_block_number):
+    def fast_forward(self, state, current_step, end_block_number):
         old_step = self.states[state]
         print(f"found {state}: {old_step}")
 
@@ -237,7 +237,9 @@ class Tetris:
                     step = Step(block_number, self.height)
 
                     if state in self.states:
-                        remaining_blocks = self.skip(state, step, end_block_number)
+                        remaining_blocks = self.fast_forward(
+                            state, step, end_block_number
+                        )
                         return self.run(remaining_blocks)
 
                     # save state as seen this step and proceed to next block
