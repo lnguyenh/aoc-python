@@ -2,6 +2,12 @@ import matplotlib.pyplot as plt
 import numpy
 
 
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
 class Grid:
 
     TRANSLATE = {}  # characters to save in the grid as some other value
