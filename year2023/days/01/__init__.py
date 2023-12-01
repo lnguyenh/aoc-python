@@ -1,4 +1,4 @@
-AS_LETTERS = {
+TRANSLATIONS_PART_2 = {
     "one": "o1e",
     "two": "t2o",
     "three": "t3e",
@@ -13,18 +13,19 @@ AS_LETTERS = {
 
 def process_input(blob):
     lines = blob.split("\n")
-    digits_1 = [[c for c in line if c.isdigit()] for line in lines]
+
+    only_digits_1 = [[c for c in line if c.isdigit()] for line in lines]
 
     lines_2 = []
     for line in lines:
-        for as_string, as_number in AS_LETTERS.items():
+        for as_string, as_number in TRANSLATIONS_PART_2.items():
             line = line.replace(as_string, as_number)
         lines_2.append(line)
-    digits_2 = [[c for c in line if c.isdigit()] for line in lines_2]
+    only_digits_2 = [[c for c in line if c.isdigit()] for line in lines_2]
 
     return (
-        [int(digit[0] + digit[-1]) for digit in digits_1],
-        [int(digit[0] + digit[-1]) for digit in digits_2],
+        [int(c[0] + c[-1]) for c in only_digits_1],
+        [int(c[0] + c[-1]) for c in only_digits_2],
     )
 
 
