@@ -1,9 +1,9 @@
-# Advent of code 2022
+# Advent of code in Python
 
 ## About
-OK, here we go again!
+OK, here we go again! After using AOC to learn Node.js and Go in 2020 and 2021, I decided to be a bit lazy and use Python :). I built a few helpers in 2022 and I am looking forward using them this year!
 
-https://adventofcode.com/2022
+https://adventofcode.com
 
 ## Quickstart
 ```
@@ -37,7 +37,7 @@ make prepare day=03 year=2023
 ```
 
 
-## Tricks I learnt this year
+## Tricks I learnt in 2022
 ### Iterate through chunks
 ```
 l = [1, 2, 3, 4, 5, 6]
