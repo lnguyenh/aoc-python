@@ -1,9 +1,9 @@
-# Advent of code 2022
+# Advent of code in Python
 
 ## About
 OK, here we go again!
 
-https://adventofcode.com/2022
+https://adventofcode.com
 
 ## Quickstart
 ```
@@ -37,7 +37,7 @@ make prepare day=03 year=2023
 ```
 
 
-## Tricks I learnt this year
+## Tricks I learnt in 2022
 ### Iterate through chunks
 ```
 l = [1, 2, 3, 4, 5, 6]
