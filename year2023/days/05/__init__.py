@@ -29,15 +29,15 @@ def process_input(blob):
 
 def do_part_1(processed_input):
     seeds, hops = processed_input
-    min_location = None
+    locations = []
     for seed in seeds:
         position = seed
 
-        # Each step
-        for mappings in hops:
+        # Each hop (ex: fertilizer to water)
+        for hop in hops:
 
             # Each possible mapping
-            for mapping in mappings:
+            for mapping in hop:
                 if mapping.source_min <= position <= mapping.source_max:
                     new_position = mapping.destination_min + (
                         position - mapping.source_min
@@ -48,10 +48,9 @@ def do_part_1(processed_input):
                 # explicit
                 position = position
 
-        if min_location is None or position < min_location:
-            min_location = position
+        locations.append(position)
 
-    return min_location
+    return min(locations)
 
 
 def do_one_hop(intervals, hop):
