@@ -83,7 +83,6 @@ class Race:
 
 
 def do_part_1(processed_input):
-    return "toto"
     times, distances, num_races, _, _ = processed_input
     num_speeds_beating_record = 1
     for i in range(num_races):
