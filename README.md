@@ -38,6 +38,11 @@ python aoc.py --day 05 --test --filename toto.txt
 make prepare day=03 year=2023
 ```
 
+## Tricks I learnt in 2023
+### Quadratic formula
+https://en.wikipedia.org/wiki/Quadratic_formula
+
+It can be an easy way to solve an equation like ax2 + bx + c = 0, instead of doing a binary search like I did for day 6.
 
 ## Tricks I learnt in 2022
 ### Iterate through chunks
