@@ -49,6 +49,22 @@ class Series:
                 break
         return new_value
 
+    def extrapolate_left(self):
+        depth = self.depth
+
+        # bottom line
+        self.values[(depth, -1)] = 0
+        depth -= 1
+
+        new_value = None
+        while True:
+            new_value = self.values[(depth, 0)] - self.values[(depth + 1, -1)]
+            self.values[(depth, -1)] = new_value
+            depth -= 1
+            if depth < 0:
+                break
+        return new_value
+
     def print(self):
         width = self.original_width + 1
         for d in range(self.depth + 1):
@@ -70,12 +86,15 @@ def do_part_1(all_series):
     for series in all_series:
         series.dig_to_bottom()
         count += series.extrapolate()
-
     return count
 
 
-def do_part_2(lines):
-    return "toto"
+def do_part_2(all_series):
+    count = 0
+    for series in all_series:
+        series.dig_to_bottom()
+        count += series.extrapolate_left()
+    return count
 
 
 def do_visualization(processed_input):
