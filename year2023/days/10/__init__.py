@@ -9,13 +9,9 @@ class Maze(Grid):
     def __init__(self, lines):
         self.animal = None
         super().__init__(lines)
-        self.edges = []
         self.links = defaultdict(list)
         self.create_links()
-        self.create_edges()
         self.start_loop = self.change_animal()
-        self.print()
-        x = 1
 
     def populate_grid(self, lines):
         for j, line in enumerate(lines):
@@ -46,53 +42,6 @@ class Maze(Grid):
             elif c == "F":
                 self.links[point].append((x + 1, y))
                 self.links[point].append((x, y + 1))
-
-    def create_edges(self):
-        for x, y in self.points:
-            point = (x, y)
-            c = self.grid[(x, y)]
-            if c == "|":
-                #
-                self.edges.append((point, (x, y + 1), 1))
-                self.edges.append(((x, y + 1), point, 1))
-                #
-                self.edges.append(((x, y - 1), point, 1))
-                self.edges.append((point, (x, y - 1), 1))
-            elif c == "-":
-                #
-                self.edges.append((point, (x + 1, y), 1))
-                self.edges.append(((x + 1, y), point, 1))
-                #
-                self.edges.append(((x - 1, y), point, 1))
-                self.edges.append((point, (x - 1, y), 1))
-            elif c == "L":
-                #
-                self.edges.append((point, (x + 1, y), 1))
-                self.edges.append(((x + 1, y), point, 1))
-                #
-                self.edges.append(((x, y - 1), point, 1))
-                self.edges.append((point, (x, y - 1), 1))
-            elif c == "J":
-                #
-                self.edges.append((point, (x - 1, y), 1))
-                self.edges.append(((x - 1, y), point, 1))
-                #
-                self.edges.append(((x, y - 1), point, 1))
-                self.edges.append((point, (x, y - 1), 1))
-            elif c == "7":
-                #
-                self.edges.append((point, (x - 1, y), 1))
-                self.edges.append(((x - 1, y), point, 1))
-                #
-                self.edges.append(((x, y + 1), point, 1))
-                self.edges.append((point, (x, y + 1), 1))
-            elif c == "F":
-                #
-                self.edges.append((point, (x + 1, y), 1))
-                self.edges.append(((x + 1, y), point, 1))
-                #
-                self.edges.append(((x, y + 1), point, 1))
-                self.edges.append((point, (x, y + 1), 1))
 
     def get_distance_to_animal(self, point):
         distance, path = djikstra(self.edges, self.animal, point)
@@ -133,36 +82,31 @@ class Maze(Grid):
         if a and c:
             if a in ["-", "L", "F"] and c in ["-", "7", "J"]:
                 self.grid[(x, y)] = "-"
-                return (x + 1, y)
+                return x + 1, y
         if b and d:
             if b in ["|", "F", "7"] and d in ["J", "L", "|"]:
                 self.grid[(x, y)] = "|"
-                return (x, y + 1)
-
+                return x, y + 1
         if a and b:
             if a in ["-", "F", "L"] and b in ["|", "F", "7"]:
                 self.grid[(x, y)] = "J"
-                return (x, y - 1)
+                return x, y - 1
         if a and d:
             if a in ["-", "F", "L"] and d in ["|", "J", "L"]:
                 self.grid[(x, y)] = "7"
-                return (x, y + 1)
-
+                return x, y + 1
         if d and c:
             if d in ["L", "J", "|"] and c in ["-", "J", "7"]:
                 self.grid[(x, y)] = "F"
-                return (x + 1, y)
+                return x + 1, y
         if b and c:
             if b in ["|", "7", "F"] and c in ["-", "J", "7"]:
                 self.grid[(x, y)] = "L"
-                return (x, y - 1)
+                return x, y - 1
         raise Exception
 
     def expand_grid(self):
         new_points_in_grid = {}
-
-        # self.change_animal()
-
         for x, y in self.points:
             current = self.grid[(x, y)]
             a = (x - 1, y)
@@ -211,25 +155,6 @@ class Maze(Grid):
                 if not grid.get((i, j)):
                     grid[(i, j)] = "x"
 
-    def expand_zone(self, zone):
-        points_to_add = set()
-        for point in zone:
-            x, y = point
-            a = (x - 1, y)
-            b = (x, y - 1)
-            c = (x + 1, y)
-            d = (x, y + 1)
-            for p in [a, b, c, d]:
-                if p not in zone:
-                    if p not in self.grid:
-                        return 0
-                    if self.grid.get(p) in [".", "x"]:
-                        points_to_add.add(p)
-
-        if points_to_add:
-            return self.expand_zone(zone.union(points_to_add))
-        return 1
-
     def expand_outside_zone(self, zone):
         points_to_add = set()
         for point in zone:
@@ -264,15 +189,12 @@ class Maze(Grid):
             points_to_simplify = self.expand_outside_zone({edge_dots[0]})
             for p in points_to_simplify:
                 self.grid[p] = " "
-            # self.print()
-            x = 1
-
-        self.print()
 
     def do_part_2(self):
-        dots = [p for p in self.points if self.grid[p] == "."]
-        # return sum([self.expand_zone({dot}) for dot in dots])
-        return len(dots)
+        self.clean_grid()
+        self.expand_grid()
+        self.simplify()
+        return len([p for p in self.points if self.grid[p] == "."])
 
 
 def process_input(blob):
@@ -287,20 +209,4 @@ def do_part_1(maze):
 
 
 def do_part_2(maze):
-    # return "toto"
-    print("BEFORE CLEAN")
-    maze.print()
-    maze.clean_grid()
-    print("BEFORE EXPAND")
-    maze.print()
-    maze.expand_grid()
-    print("AFTER EXPAND")
-    maze.print()
-    maze.simplify()
-    print("AFTER SIMPLIFY")
-    # maze.print()
     return maze.do_part_2()
-
-
-def do_visualization(processed_input):
-    return None
