@@ -2,7 +2,6 @@ import sys
 from collections import defaultdict
 from time import sleep
 
-from utils.djikstra import djikstra
 from utils.grid import Grid
 
 
@@ -15,9 +14,9 @@ class Maze(Grid):
         "-": 5,
         "L": 5,
         ".": 100,
-        "x": 300,
-        " ": 500,
-        "H": 1500,
+        "x": 300,  # Used when expanding the grid. Means the same than dots but is "virtual"
+        " ": 500,  # Used when removing all non relevant points outside the loop
+        "H": 1500,  # Used for flashing animation
     }
     PLOT_BOX = (280, 280)
     CMAP = "bone"
@@ -62,10 +61,6 @@ class Maze(Grid):
             elif c == "F":
                 self.links[point].append((x + 1, y))
                 self.links[point].append((x, y + 1))
-
-    def get_distance_to_animal(self, point):
-        distance, path = djikstra(self.edges, self.animal, point)
-        return distance, path
 
     def get_point_to(self, point_from, point_current):
         z = [point for point in self.links[point_current] if point != point_from]
@@ -158,11 +153,8 @@ class Maze(Grid):
                 else:
                     new_points_in_grid[(x, y + 0.5)] = "x"
 
+        self.grid.update(new_points_in_grid)
         grid = {}
-        for key, value in new_points_in_grid.items():
-            x, y = key
-            new_key = (int(x * 2), int(y * 2))
-            grid[new_key] = value
         for key, value in self.grid.items():
             x, y = key
             new_key = (int(x * 2), int(y * 2))
@@ -194,6 +186,8 @@ class Maze(Grid):
             return zone
 
     def simplify(self):
+        # Remove all dots that our outside the loop.
+        # Done by expanding all the dots touching the border of the image
         sys.setrecursionlimit(10000)
         x_min, x_max, y_min, y_max = self.get_min_maxes()
 
@@ -212,7 +206,7 @@ class Maze(Grid):
             for i, p in enumerate(points_to_simplify):
                 if self.visu and i % 125 == 0:
                     self.refresh_plot()
-                self.grid[p] = " "
+                self.grid[p] = " "  # all points outside the loop
 
     def do_part_2(self):
         self.clean_grid()
@@ -224,9 +218,8 @@ class Maze(Grid):
         return len([p for p in self.points if self.grid[p] == "."])
 
     def highlight_dots(self):
-
+        # Flashing animation when doing visualization
         points = [p for p in self.points if self.grid[p] == "."]
-
         for i in range(200):
             if i % 2:
                 value = 1500
