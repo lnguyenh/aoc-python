@@ -175,9 +175,9 @@ class Maze(Grid):
                 if not grid.get((i, j)):
                     grid[(i, j)] = "x"
 
-    def expand_outside_zone(self, zone):
+    def expand_outside_zone(self, zone, new_points):
         points_to_add = set()
-        for point in zone:
+        for point in new_points:
             x, y = point
             a = (x - 1, y)
             b = (x, y - 1)
@@ -189,7 +189,7 @@ class Maze(Grid):
                         points_to_add.add(p)
 
         if points_to_add:
-            return self.expand_outside_zone(zone.union(points_to_add))
+            return self.expand_outside_zone(zone.union(points_to_add), points_to_add)
         else:
             return zone
 
@@ -206,7 +206,9 @@ class Maze(Grid):
             ]
             if not edge_dots:
                 break
-            points_to_simplify = self.expand_outside_zone({edge_dots[0]})
+            points_to_simplify = self.expand_outside_zone(
+                {edge_dots[0]}, {edge_dots[0]}
+            )
             for i, p in enumerate(points_to_simplify):
                 if self.visu and i % 125 == 0:
                     self.refresh_plot()
