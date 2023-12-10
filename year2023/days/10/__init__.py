@@ -1,17 +1,37 @@
 import sys
 from collections import defaultdict
+from time import sleep
 
 from utils.djikstra import djikstra
 from utils.grid import Grid
 
 
 class Maze(Grid):
-    def __init__(self, lines):
+    PLOT = {
+        "F": 5,
+        "J": 5,
+        "|": 5,
+        "7": 5,
+        "-": 5,
+        "L": 5,
+        ".": 100,
+        "x": 300,
+        " ": 500,
+        "H": 1500,
+    }
+    PLOT_BOX = (280, 280)
+    CMAP = "bone"
+    FIGSIZE = (10, 10)
+
+    def __init__(self, lines, visu=False):
         self.animal = None
         super().__init__(lines)
         self.links = defaultdict(list)
         self.create_links()
         self.start_loop = self.change_animal()
+        self.visu = visu  # visualization flag
+        if visu:
+            self.initialize_plot()
 
     def populate_grid(self, lines):
         for j, line in enumerate(lines):
@@ -187,26 +207,52 @@ class Maze(Grid):
             if not edge_dots:
                 break
             points_to_simplify = self.expand_outside_zone({edge_dots[0]})
-            for p in points_to_simplify:
+            for i, p in enumerate(points_to_simplify):
+                if self.visu and i % 125 == 0:
+                    self.refresh_plot()
                 self.grid[p] = " "
 
     def do_part_2(self):
         self.clean_grid()
         self.expand_grid()
+        if self.visu:
+            self.refresh_plot()
+            sleep(5)
         self.simplify()
         return len([p for p in self.points if self.grid[p] == "."])
 
+    def highlight_dots(self):
+
+        points = [p for p in self.points if self.grid[p] == "."]
+
+        for i in range(200):
+            if i % 2:
+                value = 1500
+            else:
+                value = 0
+            for point in points:
+                self.grid[point] = value
+
+            if self.visu:
+                self.refresh_plot()
+
 
 def process_input(blob):
-    lines = blob.split("\n")
+    return blob.split("\n")
+
+
+def do_part_1(lines):
     maze = Maze(lines)
-    return maze
-
-
-def do_part_1(maze):
     length, _ = maze.trace_loop()
     return int(round(length / 2))
 
 
-def do_part_2(maze):
+def do_part_2(lines):
+    maze = Maze(lines)
     return maze.do_part_2()
+
+
+def do_visualization(lines):
+    maze = Maze(lines, visu=True)
+    maze.do_part_2()
+    maze.highlight_dots()
