@@ -6,9 +6,6 @@ from utils.grid import Grid
 class Universe(Grid):
     def __init__(self, lines):
         super().__init__(lines)
-        self.print()
-        self.expand()
-        self.print()
 
     def detect_empty(self):
         minx, maxx, miny, maxy = self.get_min_maxes()
@@ -20,7 +17,7 @@ class Universe(Grid):
                 column_indexes.discard(x)
         return list(row_indexes), list(column_indexes)
 
-    def expand(self):
+    def expand(self, delta):
         new_grid = {coordinates: c for coordinates, c in self.grid.items() if c == "#"}
         self.grid = new_grid
 
@@ -32,12 +29,12 @@ class Universe(Grid):
         for i in i_expands:
             for (x0, y0), (x1, y1) in galaxies.items():
                 if x0 > i:
-                    galaxies[(x0, y0)] = (x1 + 1, y1)
+                    galaxies[(x0, y0)] = (x1 + delta, y1)
 
         for j in j_expands:
             for (x0, y0), (x1, y1) in galaxies.items():
                 if y0 > j:
-                    galaxies[(x0, y0)] = (x1, y1 + 1)
+                    galaxies[(x0, y0)] = (x1, y1 + delta)
 
         new_grid = {coordinates: "#" for _, coordinates in galaxies.items()}
         self.grid = new_grid
@@ -51,15 +48,19 @@ class Universe(Grid):
 
 
 def process_input(blob):
-    return Universe(blob.split("\n"))
+    return blob.split("\n")
 
 
-def do_part_1(universe):
+def do_part_1(lines):
+    universe = Universe(lines)
+    universe.expand(1)
     return universe.sum_shortest_paths()
 
 
-def do_part_2(processed_input):
-    return "toto"
+def do_part_2(lines):
+    universe = Universe(lines)
+    universe.expand(999999)
+    return universe.sum_shortest_paths()
 
 
 def do_visualization(processed_input):
