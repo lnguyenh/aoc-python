@@ -24,6 +24,8 @@ class Grid:
         self.grid = {}
         self.populate_grid(lines)
 
+        self.minx, self.maxx, self.miny, self.maxy = self.get_min_maxes()
+
         # Matplotlib stuff
         self.path = []
         self.done = False
