@@ -1,11 +1,13 @@
 import itertools
-from collections import deque
+from utils.bfs_traversal import bfs_count
 
 
 class Row:
     def __init__(self, phrase, arrangement):
-        self.phrase = phrase
-        self.arrangement = [int(c) for c in arrangement.split(",")]
+        self.phrase = "?".join([phrase, phrase, phrase, phrase, phrase])
+        self.arrangement = [int(c) for c in arrangement.split(",")] * 5
+        # self.phrase = phrase
+        # self.arrangement = [int(c) for c in arrangement.split(",")]
         self.num_springs = len(self.phrase)
         self.num_broken = sum(self.arrangement)
         self.num_working = self.num_springs - self.num_broken
@@ -54,9 +56,13 @@ def process_input(blob):
 
 def do_part_1(lines):
     total = 0
+    i = 0
     for phrase, arrangement in lines:
         row = Row(phrase, arrangement)
-        total += row.count_allowed_candidates()
+        x = bfs_count(row.phrase, row.arrangement)
+        print(i, x)
+        i += 1
+        total += x
     return total
 
 
