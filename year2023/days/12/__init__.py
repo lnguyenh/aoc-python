@@ -1,9 +1,9 @@
 import itertools
 import re
+from functools import lru_cache
 
-from utils.bfs_traversal import bfs_count
 
-
+@lru_cache
 def process(phrase, arrangement):
     if not phrase:
         return 1 if not arrangement else 0
@@ -41,10 +41,10 @@ def process(phrase, arrangement):
 
 class Row:
     def __init__(self, phrase, arrangement):
-        self.phrase = "?".join([phrase, phrase, phrase, phrase, phrase])
-        self.arrangement = [int(c) for c in arrangement.split(",")] * 5
-        # self.phrase = phrase
-        # self.arrangement = [int(c) for c in arrangement.split(",")]
+        self.phrase_5 = "?".join([phrase, phrase, phrase, phrase, phrase])
+        self.arrangement_5 = tuple([int(c) for c in arrangement.split(",")]) * 5
+        self.phrase = phrase
+        self.arrangement = tuple([int(c) for c in arrangement.split(",")])
         self.num_springs = len(self.phrase)
         self.num_broken = sum(self.arrangement)
         self.num_working = self.num_springs - self.num_broken
@@ -93,19 +93,20 @@ def process_input(blob):
 
 def do_part_1(lines):
     total = 0
-    i = 0
     for phrase, arrangement in lines:
         row = Row(phrase, arrangement)
         x = process(row.phrase, row.arrangement)
-        # x = bfs_count(row.phrase, row.arrangement)
-        print(i, x)
-        i += 1
         total += x
     return total
 
 
 def do_part_2(lines):
-    return "toto"
+    total = 0
+    for phrase, arrangement in lines:
+        row = Row(phrase, arrangement)
+        x = process(row.phrase_5, row.arrangement_5)
+        total += x
+    return total
 
 
 def do_visualization(processed_input):
@@ -113,9 +114,5 @@ def do_visualization(processed_input):
 
 
 if __name__ == "__main__":
-    # print(process("????.#...#...", []))
-    # print(process("????.......", []))
-    # print(process("????.#...#...", [4, 1, 1]))
-    # print(process("?#?#?#?#?#?#?#?", [1, 3, 1, 6]))
     print(process("?###????????", [3, 2, 1]))
     print(process("????.######..#####. 1,6,5", [1, 6, 5]))

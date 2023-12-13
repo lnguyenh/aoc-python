@@ -44,6 +44,17 @@ https://en.wikipedia.org/wiki/Quadratic_formula
 
 It can be an easy way to solve an equation like ax2 + bx + c = 0, instead of doing a binary search like I did for day 6.
 
+### Ray casting
+Day 10. With a loop or polygon, one can use ray casting to know if a point is inside or outside a polygon. I did not use that method myself. 
+But if you do, some adjustments had to be made for "edges" and straight lines that our ray might touch.
+See https://en.wikipedia.org/wiki/Point_in_polygon
+
+### LRU cache
+Day 12. For huge tree traversal to count gazillions possibilities, lru_cache helped speed up dramatically the output. From 100+ days to 500ms...
+
+### BFS traversal
+Day 12. For the first time in aoc, explicitely made a dynamic BFS traversal, when all edges are not known and we generate them on the fly. See the utils. Still a wip, could possibly be made more general sometime.
+
 ## Tricks I learnt in 2022
 ### Iterate through chunks
 ```
