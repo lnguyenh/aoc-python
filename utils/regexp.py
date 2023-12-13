@@ -65,3 +65,18 @@ if __name__ == "__main__":
         )
     )
     print(search_groups(r"^([0-9]+)\*([\w]+)=(.*)$", "1*NHQH=3*NDMT"))
+
+    # Example re.search
+    match = re.search(r"[\?#][\?#][\?#]", "..?#??123")
+    print(match)
+    print(match.groups())
+    print(match.start(0))
+    print(match.end(0))
+
+    n = 3
+    reg = re.compile(r"[\?#]{" + str(n) + "}")
+    match = reg.match("?#?.")
+    print(match)
+    print(match.groups())
+    print(match.start(0))
+    print(match.end(0))

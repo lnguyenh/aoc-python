@@ -1,5 +1,42 @@
 import itertools
+import re
+
 from utils.bfs_traversal import bfs_count
+
+
+def process(phrase, arrangement):
+    if not phrase:
+        return 1 if not arrangement else 0
+
+    # no group to find
+    if not arrangement:
+        if phrase.count("#") > 0:
+            return 0
+        return 1
+
+    target = arrangement[0]
+
+    # not enough characters to satisfy next target
+    if target > len(phrase):
+        return 0
+
+    # try to find target
+    reg = re.compile(r"[\?#]{" + str(target) + r"}($|\.|\?)")
+    match = reg.match(phrase)
+    if match:
+        first_after_match = match.end(0)
+        if phrase[0] == "?":
+            return process(phrase[first_after_match:], arrangement[1:]) + process(
+                phrase[1:], arrangement
+            )
+        else:
+            return process(phrase[first_after_match:], arrangement[1:])
+
+    # if we find a # at the start it must be too few
+    if phrase[0] == "#":
+        return 0
+
+    return process(phrase[1:], arrangement)
 
 
 class Row:
@@ -59,7 +96,8 @@ def do_part_1(lines):
     i = 0
     for phrase, arrangement in lines:
         row = Row(phrase, arrangement)
-        x = bfs_count(row.phrase, row.arrangement)
+        x = process(row.phrase, row.arrangement)
+        # x = bfs_count(row.phrase, row.arrangement)
         print(i, x)
         i += 1
         total += x
@@ -72,3 +110,12 @@ def do_part_2(lines):
 
 def do_visualization(processed_input):
     return None
+
+
+if __name__ == "__main__":
+    # print(process("????.#...#...", []))
+    # print(process("????.......", []))
+    # print(process("????.#...#...", [4, 1, 1]))
+    # print(process("?#?#?#?#?#?#?#?", [1, 3, 1, 6]))
+    print(process("?###????????", [3, 2, 1]))
+    print(process("????.######..#####. 1,6,5", [1, 6, 5]))
