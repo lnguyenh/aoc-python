@@ -48,11 +48,11 @@ def djikstra(edges, start, destination):
 
 
 if __name__ == "__main__":
-    edges = [
+    problem_edges = [
         ("A", "B", 1),
         ("A", "D", 99),
         ("B", "C", 2),
         ("C", "D", 3),
     ]
     print("A -> D:")
-    print(djikstra(edges, "A", "D"))
+    print(djikstra(problem_edges, "A", "D"))

@@ -42,6 +42,7 @@ def dfs(edges, start, destination):
 
 
 if __name__ == "__main__":
+    # Edges are directional
     edges = [
         ("A", "B"),
         ("B", "C"),
