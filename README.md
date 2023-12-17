@@ -38,6 +38,16 @@ python aoc.py --day 05 --test --filename toto.txt
 make prepare day=03 year=2023
 ```
 
+## Classic themes
+### Repeating pattern with loop allowing to skip a lot of computing
+- 2023 Day 14
+
+### Djikstra
+- 2023 Day 17
+
+### Intervals
+- 2023 Day 5
+
 ## Tricks I learnt in 2023
 ### Quadratic formula
 https://en.wikipedia.org/wiki/Quadratic_formula
