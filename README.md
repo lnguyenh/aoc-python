@@ -48,6 +48,9 @@ make prepare day=03 year=2023
 ### Intervals
 - 2023 Day 5
 
+### LCM Lowest common multiple
+- 2023 Day 8
+
 ## Tricks I learnt in 2023
 ### Quadratic formula
 https://en.wikipedia.org/wiki/Quadratic_formula
