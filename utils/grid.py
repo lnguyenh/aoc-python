@@ -52,6 +52,9 @@ class Grid:
         yes = [y for _, y in self.grid.keys()]
         return min(xes), max(xes), min(yes), max(yes)
 
+    def refresh_min_maxes(self):
+        self.minx, self.maxx, self.miny, self.maxy = self.get_min_maxes()
+
     def point_up(self, point):
         x, y = point
         return self.grid.get((x, y - 1))
