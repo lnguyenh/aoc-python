@@ -68,6 +68,9 @@ Day 12. For huge tree traversal to count gazillions possibilities, lru_cache hel
 ### BFS traversal
 Day 12. For the first time in aoc, explicitely made a dynamic BFS traversal, when all edges are not known and we generate them on the fly. See the utils. Still a wip, could possibly be made more general sometime.
 
+### Shoelace theorem
+Day 18. Can be useful to calculate the inside of a polygon. Henrik googled "Polygon area".
+
 ## Tricks I learnt in 2022
 ### Iterate through chunks
 ```
