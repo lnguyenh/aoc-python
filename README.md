@@ -69,7 +69,8 @@ Day 12. For huge tree traversal to count gazillions possibilities, lru_cache hel
 Day 12. For the first time in aoc, explicitely made a dynamic BFS traversal, when all edges are not known and we generate them on the fly. See the utils. Still a wip, could possibly be made more general sometime.
 
 ### Shoelace theorem
-Day 18. Can be useful to calculate the inside of a polygon. Henrik googled "Polygon area". https://www.themathdoctors.org/polygon-coordinates-and-areas/ https://www.reddit.com/r/adventofcode/comments/18l2nk2/2023_day_18_easiest_way_to_solve_both_parts/
+Day 18. Can be useful to calculate the inside of a polygon. Henrik googled "Polygon area". https://www.themathdoctors.org/polygon-coordinates-and-areas/ https://www.reddit.com/r/adventofcode/comments/18l2nk2/2023_day_18_easiest_way_to_solve_both_parts/.
+Pick's theorem. Gotcha as we dont have a pure line in this problem.
 
 ## Tricks I learnt in 2022
 ### Iterate through chunks
