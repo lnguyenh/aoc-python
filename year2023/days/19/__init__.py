@@ -153,31 +153,32 @@ def do_part_2(processed_input):
 
     results = 0
     for pcs in all_path_conditions:
-        xs_ = []
-        ms_ = []
-        as_ = []
-        ss_ = []
+        xs_ = set(list(range(1, 4001)))
+        ms_ = set(list(range(1, 4001)))
+        as_ = set(list(range(1, 4001)))
+        ss_ = set(list(range(1, 4001)))
         for x in range(1, 4001):
             for c in pcs:
                 if c.m0 == "x":
-                    if c.operator(x, c.m1):
-                        xs_.append(x)
+                    if not c.operator(x, c.m1):
+                        xs_.discard(x)
         for m in range(1, 4001):
             for c in pcs:
                 if c.m0 == "m":
-                    if c.operator(m, c.m1):
-                        ms_.append(m)
+                    if not c.operator(m, c.m1):
+                        ms_.discard(m)
         for a in range(1, 4001):
             for c in pcs:
                 if c.m0 == "a":
-                    if c.operator(a, c.m1):
-                        as_.append(a)
+                    if not c.operator(a, c.m1):
+                        as_.discard(a)
         for s in range(1, 4001):
             for c in pcs:
                 if c.m0 == "s":
-                    if c.operator(s, c.m1):
-                        ss_.append(s)
-        results += len(as_) * len(xs_) * len(ms_) * len(ss_)
+                    if not c.operator(s, c.m1):
+                        ss_.discard(s)
+        to_add = len(as_) * len(xs_) * len(ms_) * len(ss_)
+        results += to_add
 
     return results
 
@@ -188,3 +189,6 @@ def do_visualization(processed_input):
 
 # 167409079868000
 # 48976201428000
+
+# 422465469875400371 too high
+# 143760172569135
