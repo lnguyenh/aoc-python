@@ -72,6 +72,11 @@ Day 12. For the first time in aoc, explicitely made a dynamic BFS traversal, whe
 Day 18. Can be useful to calculate the inside of a polygon. Henrik googled "Polygon area". https://www.themathdoctors.org/polygon-coordinates-and-areas/ https://www.reddit.com/r/adventofcode/comments/18l2nk2/2023_day_18_easiest_way_to_solve_both_parts/.
 Pick's theorem. Gotcha as we dont have a pure line in this problem.
 
+### Shapely library
+Day 18. Can be used to easily calculate area of polygon and other things with coordinates.
+https://shapely.readthedocs.io/en/stable/manual.html
+
+
 ## Tricks I learnt in 2022
 ### Iterate through chunks
 ```
