@@ -91,6 +91,40 @@ class Computer:
                 self.apply_pulse(pulse, pulses, counters)
         return counters[LOW] * counters[HIGH]
 
+    def process2(self, initial_pulse):
+        counters = defaultdict(int)
+        i = 0
+        j = 0
+        rx_i = 0
+        # high_pulses = defaultdict(list)
+        while True:
+            i += 1
+            pulses = deque([initial_pulse])
+            counters[initial_pulse.value] += 1
+            k = 0
+            while pulses:
+                pulse = pulses.popleft()
+                j += 1
+                # if pulse.value == HIGH:
+                # if pulse.receiver in ["rv", "vp", "dc", "cq"]:
+                #     high_pulses[pulse.receiver].append(j)
+                #     if len(high_pulses[pulse.receiver]) > 2:
+                #         print(
+                #             pulse.receiver,
+                #             high_pulses[pulse.receiver][-1]
+                #             - high_pulses[pulse.receiver][-2],
+                #             high_pulses[pulse.receiver][-2]
+                #             - high_pulses[pulse.receiver][-3],
+                #         )
+                #     toto = 1
+                if pulse.receiver == "rx" and pulse.value == LOW:
+                    rx_i = i
+                    break
+                self.apply_pulse(pulse, pulses, counters)
+            if rx_i:
+                break
+        return rx_i
+
 
 def process_input(blob):
     blob = blob.replace(" ->", "")
@@ -123,12 +157,14 @@ def process_input(blob):
 
 
 def do_part_1(modules):
+    return "toto"
     computer = Computer(modules)
     return computer.process(Pulse("button", "broadcaster", LOW))
 
 
 def do_part_2(modules):
-    return "toto"
+    computer = Computer(modules)
+    return computer.process2(Pulse("button", "broadcaster", LOW))
 
 
 def do_visualization(processed_input):
