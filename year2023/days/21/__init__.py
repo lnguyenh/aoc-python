@@ -4,6 +4,11 @@ from utils.djikstra import djikstra
 from utils.grid import Grid
 
 
+class Block:
+    def __init__(self):
+        pass
+
+
 class Garden(Grid):
     def __init__(self, lines):
         super().__init__(lines)
@@ -45,6 +50,13 @@ class Garden(Grid):
         ]
         return len(even_distances)
 
+    def get_max_uneven_destinations(self):
+        self.populate_distances()
+        even_distances = [
+            d for dot, d in self.distances.items() if d % 2 == 0 and d <= 150
+        ]
+        return len(even_distances)
+
     def print_distances(self):
         x_min, x_max, y_min, y_max = self.get_min_maxes()
         for j in range(y_min, y_max + 1):
@@ -61,15 +73,17 @@ def process_input(blob):
 
 
 def do_part_1(lines):
+    return "toto"
     garden = Garden(lines)
     return garden.do_part_1()
 
 
 def do_part_2(lines):
     garden = Garden(lines)
-    # garden.populate_distances()
+    garden.populate_distances()
     # garden.print_distances()
-    return "toto"
+
+    return garden.get_max_uneven_destinations()
 
 
 def do_visualization(processed_input):
