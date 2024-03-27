@@ -28,7 +28,7 @@ def bfs(edges, start, destination):
         return 0, [start]
 
     while paths:
-        path = paths.pop()
+        path = paths.popleft()
         node = path[-1]
 
         # Getting the neighbours could be made dynamic for some aoc problems

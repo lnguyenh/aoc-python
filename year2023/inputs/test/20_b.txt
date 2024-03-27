@@ -1,9 +1,10 @@
+
+%lt -> rh
+
 %vh -> qc, rr
-%zj -> kn, pb
 %gp -> cp
 %qc -> gp
 %gx -> xf
-%hd -> lt, nl
 %ht -> jv
 %bs -> pb, rd
 %vr -> qb
@@ -11,16 +12,13 @@
 %cf -> jg, rr
 %hj -> cf, rr
 %mt -> rr
-%sq -> rr, vh
 %jg -> rr, pd
 %gf -> gv
 %rh -> nl, gx
-broadcaster -> hd, zj, sq, jz
 %rd -> vs, pb
 %pd -> rr, mt
 %vs -> pb
 %nx -> pb, bs
-%lt -> rh
 %tc -> qz
 %qb -> hq
 %rl -> pf, nl
@@ -44,12 +42,18 @@ broadcaster -> hd, zj, sq, jz
 %zp -> mm, dj
 %jv -> dj, zs
 %xv -> dj, dx
-%jz -> dj, ht
 %dx -> fq, dj
 %dq -> dj, jc
 %mm -> dj
 %tg -> nl, ks
 %pr -> nl
+
+broadcaster -> hd, zj, sq, jz
+
+%sq -> rr, vh
+%zj -> kn, pb
+%jz -> dj, ht
+%hd -> lt, nl
 
 &rr -> gp, rv, jt, qc, sq
 &pb -> gf, gv, vp, qb, vr, hq, zj

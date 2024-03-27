@@ -1,4 +1,3 @@
-import heapq
 from collections import defaultdict
 from functools import cached_property
 
@@ -21,6 +20,7 @@ class Brick:
 
         self.zs = None
         self.z = None
+        self.max_z = None
         self.set_zs(self.z0)
 
     @cached_property
@@ -33,16 +33,12 @@ class Brick:
 
     def set_zs(self, z):
         self.z = z
+        self.max_z = z + (self.z1 - self.z0)
         self.zs = list(range(z, z + (self.z1 - self.z0) + 1))
 
 
 def process_input(blob):
     bricks = [Brick(f"B{i}", line) for i, line in enumerate(blob.split("\n"))]
-    return bricks
-
-
-def do_part_1(bricks):
-
     while True:
         num = 0
         for brick in bricks:
@@ -61,31 +57,43 @@ def do_part_1(bricks):
 
     supported_by = defaultdict(set)
     supports = defaultdict(set)
-    answer = set()
     for brick in bricks:
         layer_above = max(brick.zs) + 1
-        bricks_above = []
         for b in bricks:
             if layer_above in b.zs and b.name != brick.name:
                 if brick.xy_points.intersection(b.xy_points):
-                    bricks_above.append(b.name)
                     supported_by[b.name].add(brick.name)
                     supports[brick.name].add(b.name)
-        if not bricks_above:
-            answer.add(brick.name)
 
+    return bricks, supported_by, supports
+
+
+def do_part_1(processed_input):
+    bricks, supported_by, supports = processed_input
     names = set([b.name for b in bricks])
-
     for brick in bricks:
         for name, by in supported_by.items():
             if by == {brick.name}:
                 names.discard(brick.name)
     return len(names)
 
-    return len(answer)
+
+def run(destroyed, supported_by, supports, names):
+    new_destroyed = set()
+    for bname, supports in supported_by.items():
+        if destroyed.intersection(supports) == destroyed:
+            new_destroyed.add(bname)
 
 
 def do_part_2(processed_input):
+    bricks, supported_by, supports = processed_input
+    bricks = sorted(bricks, key=lambda x: x.max_z, reverse=True)
+    names = set([b.name for b in bricks])
+    destruction = {}
+    for name in names:
+        for target in supports[name]:
+            pass
+
     return "toto"
 
 
