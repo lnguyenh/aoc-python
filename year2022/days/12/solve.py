@@ -51,7 +51,9 @@ if __name__ == "__main__":
     # Edges are directional
     test_edges = [
         ("A", "B"),
+        ("A", "X"),
         ("B", "C"),
+        ("B", "Y"),
         ("C", "F"),
         ("C", "E"),
         ("C", "G"),
