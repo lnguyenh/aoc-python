@@ -5,12 +5,14 @@ def bfs(edges, start, destination):
     return 0
 
 
-
 def process_input(blob):
     edges = []
     letters = {}
     start = None
     end = None
+
+    # Model the grid as a dictionary
+    # The key is the position as a tuple (x, y). the value is the letter at that position
     for y, line in enumerate(blob.split("\n")):
         for x, letter in enumerate(line):
             if letter == "S":
@@ -21,6 +23,8 @@ def process_input(blob):
                 letters[(x, y)] = "z"
             else:
                 letters[(x, y)] = letter
+
+    # Build the graph edges
     for key, letter in letters.items():
         x, y = key
         for x1, y1 in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
@@ -29,6 +33,7 @@ def process_input(blob):
                 delta = ord(adjacent_letter) - ord(letter)
                 if delta <= 1:
                     edges.append(((x, y), (x1, y1)))
+
     return edges, start, end, letters
 
 
