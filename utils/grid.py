@@ -71,6 +71,22 @@ class Grid:
         x, y = point
         return self.grid.get((x - 1, y))
 
+    def point_down_left(self, point):
+        x, y = point
+        return self.grid.get((x - 1, y + 1))
+
+    def point_down_right(self, point):
+        x, y = point
+        return self.grid.get((x + 1, y + 1))
+
+    def point_up_left(self, point):
+        x, y = point
+        return self.grid.get((x - 1, y - 1))
+
+    def point_up_right(self, point):
+        x, y = point
+        return self.grid.get((x + 1, y - 1))
+
     def is_in_bounds(self, point):
         x, y = point
         return self.minx <= x <= self.maxx and self.miny <= y <= self.maxy
