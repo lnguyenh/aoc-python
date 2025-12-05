@@ -17,8 +17,9 @@ class Grid:
     PLOT = {}  # special translations when animating (see 2019 day 11 for example)
     X_OFFSET = 0
     Y_OFFSET = 0
-    CMAP = None  # "bones", ...
+    CMAP = None  # "bone", ...
     FIGSIZE = None  # ex: (18, 9) used to change size/ratio
+    DELAY_AFTER_REFRESH = 0.01
 
     def __init__(self, lines, *args, **kwargs):
         self.grid = {}
@@ -131,7 +132,7 @@ class Grid:
         self.add_to_plot(grid)
         self.im.set_data(grid)
         self.fig.canvas.draw_idle()
-        plt.pause(0.01)
+        plt.pause(self.DELAY_AFTER_REFRESH)
 
     def print_box_size(self):
         # Can be used to help finding good setting for visualization
